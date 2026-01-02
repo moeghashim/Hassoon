@@ -108,7 +108,7 @@ import Testing
                 "remote": ["password": "remote"],
             ],
         ]
-        let env = ["CLAWDIS_GATEWAY_PASSWORD": " env "]
+        let env = ["HASSOON_GATEWAY_PASSWORD": " env "]
 
         #expect(GatewayEndpointStore._testResolveGatewayPassword(
             isRemote: false,
@@ -127,7 +127,7 @@ import Testing
                 "remote": ["password": "\n\t"],
             ],
         ]
-        let env = ["CLAWDIS_GATEWAY_PASSWORD": "  "]
+        let env = ["HASSOON_GATEWAY_PASSWORD": "  "]
 
         #expect(GatewayEndpointStore._testResolveGatewayPassword(
             isRemote: false,

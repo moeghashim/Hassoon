@@ -157,13 +157,13 @@ enum GatewayLaunchAgentManager {
 
     private static func preferredGatewayPassword() -> String? {
         // First check environment variable
-        let raw = ProcessInfo.processInfo.environment["CLAWDIS_GATEWAY_PASSWORD"] ?? ""
+        let raw = ProcessInfo.processInfo.environment["HASSOON_GATEWAY_PASSWORD"] ?? ""
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmed.isEmpty {
             return trimmed
         }
         // Then check config file (gateway.auth.password)
-        let root = ClawdisConfigFile.loadDict()
+        let root = HassoonConfigFile.loadDict()
         if let gateway = root["gateway"] as? [String: Any],
            let auth = gateway["auth"] as? [String: Any],
            let password = auth["password"] as? String

@@ -1,5 +1,5 @@
-import ClawdisChatUI
-import ClawdisKit
+import HassoonChatUI
+import HassoonKit
 import SwiftUI
 
 private struct SessionPreviewItem: Identifiable, Sendable {
@@ -170,10 +170,10 @@ struct SessionMenuPreviewView: View {
     }
 
     private static func previewItems(
-        from payload: ClawdisChatHistoryPayload,
+        from payload: HassoonChatHistoryPayload,
         maxItems: Int) -> [SessionPreviewItem]
     {
-        let raw: [ClawdisKit.AnyCodable] = payload.messages ?? []
+        let raw: [HassoonKit.AnyCodable] = payload.messages ?? []
         let messages = self.decodeMessages(raw)
         let built = messages.compactMap { message -> SessionPreviewItem? in
             guard let text = self.previewText(for: message) else { return nil }
@@ -187,10 +187,10 @@ struct SessionMenuPreviewView: View {
         return Array(trimmed.reversed())
     }
 
-    private static func decodeMessages(_ raw: [ClawdisKit.AnyCodable]) -> [ClawdisChatMessage] {
+    private static func decodeMessages(_ raw: [HassoonKit.AnyCodable]) -> [HassoonChatMessage] {
         raw.compactMap { item in
             guard let data = try? JSONEncoder().encode(item) else { return nil }
-            return try? JSONDecoder().decode(ClawdisChatMessage.self, from: data)
+            return try? JSONDecoder().decode(HassoonChatMessage.self, from: data)
         }
     }
 
@@ -205,7 +205,7 @@ struct SessionMenuPreviewView: View {
         }
     }
 
-    private static func previewText(for message: ClawdisChatMessage) -> String? {
+    private static func previewText(for message: HassoonChatMessage) -> String? {
         let text = message.content.compactMap(\.text).joined(separator: "\n")
             .trimmingCharacters(in: .whitespacesAndNewlines)
         if !text.isEmpty { return text }
@@ -226,12 +226,12 @@ struct SessionMenuPreviewView: View {
         return nil
     }
 
-    private static func isToolCall(_ message: ClawdisChatMessage) -> Bool {
+    private static func isToolCall(_ message: HassoonChatMessage) -> Bool {
         if message.toolName?.nonEmpty != nil { return true }
         return message.content.contains { $0.name?.nonEmpty != nil || $0.type?.lowercased() == "toolcall" }
     }
 
-    private static func toolNames(for message: ClawdisChatMessage) -> [String] {
+    private static func toolNames(for message: HassoonChatMessage) -> [String] {
         var names: [String] = []
         for content in message.content {
             if let name = content.name?.nonEmpty {
@@ -244,7 +244,7 @@ struct SessionMenuPreviewView: View {
         return Self.dedupePreservingOrder(names)
     }
 
-    private static func mediaSummary(for message: ClawdisChatMessage) -> String? {
+    private static func mediaSummary(for message: HassoonChatMessage) -> String? {
         let types = message.content.compactMap { content -> String? in
             let raw = content.type?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
             guard let raw, !raw.isEmpty else { return nil }
