@@ -1,0 +1,37 @@
+import Foundation
+
+let launchdLabel = "com.moeghashim.hassoon"
+let gatewayLaunchdLabel = "com.moeghashim.hassoon.gateway"
+let onboardingVersionKey = "hassoon.onboardingVersion"
+let currentOnboardingVersion = 7
+let pauseDefaultsKey = "hassoon.pauseEnabled"
+let iconAnimationsEnabledKey = "hassoon.iconAnimationsEnabled"
+let swabbleEnabledKey = "hassoon.swabbleEnabled"
+let swabbleTriggersKey = "hassoon.swabbleTriggers"
+let voiceWakeTriggerChimeKey = "hassoon.voiceWakeTriggerChime"
+let voiceWakeSendChimeKey = "hassoon.voiceWakeSendChime"
+let showDockIconKey = "hassoon.showDockIcon"
+let defaultVoiceWakeTriggers = ["hassoon", "claude"]
+let voiceWakeMicKey = "hassoon.voiceWakeMicID"
+let voiceWakeLocaleKey = "hassoon.voiceWakeLocaleID"
+let voiceWakeAdditionalLocalesKey = "hassoon.voiceWakeAdditionalLocaleIDs"
+let voicePushToTalkEnabledKey = "hassoon.voicePushToTalkEnabled"
+let talkEnabledKey = "hassoon.talkEnabled"
+let iconOverrideKey = "hassoon.iconOverride"
+let connectionModeKey = "hassoon.connectionMode"
+let remoteTargetKey = "hassoon.remoteTarget"
+let remoteIdentityKey = "hassoon.remoteIdentity"
+let remoteProjectRootKey = "hassoon.remoteProjectRoot"
+let remoteCliPathKey = "hassoon.remoteCliPath"
+let canvasEnabledKey = "hassoon.canvasEnabled"
+let cameraEnabledKey = "hassoon.cameraEnabled"
+let peekabooBridgeEnabledKey = "hassoon.peekabooBridgeEnabled"
+let deepLinkKeyKey = "hassoon.deepLinkKey"
+let modelCatalogPathKey = "hassoon.modelCatalogPath"
+let modelCatalogReloadKey = "hassoon.modelCatalogReload"
+let attachExistingGatewayOnlyKey = "hassoon.gateway.attachExistingOnly"
+let heartbeatsEnabledKey = "hassoon.heartbeatsEnabled"
+let debugFileLogEnabledKey = "hassoon.debug.fileLogEnabled"
+let appLogLevelKey = "hassoon.debug.appLogLevel"
+let voiceWakeSupported: Bool = ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 26
+let cliHelperSearchPaths = ["/usr/local/bin", "/opt/homebrew/bin"]

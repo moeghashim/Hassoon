@@ -10,7 +10,7 @@ import {
   createProcessTool,
   type ProcessToolDefaults,
 } from "./bash-tools.js";
-import { createClawdisTools } from "./clawdis-tools.js";
+import { createHassoonTools } from "./hassoon-tools.js";
 import { sanitizeToolResultImages } from "./tool-images.js";
 
 // TODO(steipete): Remove this wrapper once pi-mono ships file-magic MIME detection
@@ -273,7 +273,7 @@ function createWhatsAppLoginTool(): AnyAgentTool {
   };
 }
 
-function createClawdisReadTool(base: AnyAgentTool): AnyAgentTool {
+function createHassoonReadTool(base: AnyAgentTool): AnyAgentTool {
   return {
     ...base,
     execute: async (toolCallId, params, signal) => {
@@ -294,12 +294,12 @@ function createClawdisReadTool(base: AnyAgentTool): AnyAgentTool {
   };
 }
 
-export function createClawdisCodingTools(options?: {
+export function createHassoonCodingTools(options?: {
   bash?: BashToolDefaults & ProcessToolDefaults;
 }): AnyAgentTool[] {
   const bashToolName = "bash";
   const base = (codingTools as unknown as AnyAgentTool[]).flatMap((tool) => {
-    if (tool.name === readTool.name) return [createClawdisReadTool(tool)];
+    if (tool.name === readTool.name) return [createHassoonReadTool(tool)];
     if (tool.name === bashToolName) return [];
     return [tool as AnyAgentTool];
   });
@@ -312,7 +312,7 @@ export function createClawdisCodingTools(options?: {
     bashTool as unknown as AnyAgentTool,
     processTool as unknown as AnyAgentTool,
     createWhatsAppLoginTool(),
-    ...createClawdisTools(),
+    ...createHassoonTools(),
   ];
   return tools.map(normalizeToolParameters);
 }

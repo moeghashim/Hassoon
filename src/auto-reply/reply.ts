@@ -25,7 +25,7 @@ import {
   DEFAULT_AGENT_WORKSPACE_DIR,
   ensureAgentWorkspace,
 } from "../agents/workspace.js";
-import { type ClawdisConfig, loadConfig } from "../config/config.js";
+import { type HassoonConfig, loadConfig } from "../config/config.js";
 import {
   buildGroupDisplayName,
   DEFAULT_IDLE_MINUTES,
@@ -41,7 +41,7 @@ import {
 import { logVerbose } from "../globals.js";
 import { registerAgentRunContext } from "../infra/agent-events.js";
 import { buildProviderSummary } from "../infra/provider-summary.js";
-import { triggerClawdisRestart } from "../infra/restart.js";
+import { triggerHassoonRestart } from "../infra/restart.js";
 import {
   drainSystemEvents,
   enqueueSystemEvent,
@@ -187,7 +187,7 @@ function stripStructuralPrefixes(text: string): string {
 function stripMentions(
   text: string,
   ctx: MsgContext,
-  cfg: ClawdisConfig | undefined,
+  cfg: HassoonConfig | undefined,
 ): string {
   let result = text;
   const patterns = cfg?.routing?.groupChat?.mentionPatterns ?? [];
@@ -221,7 +221,7 @@ function defaultQueueModeForSurface(surface?: string): QueueMode {
 }
 
 function resolveQueueMode(params: {
-  cfg: ClawdisConfig;
+  cfg: HassoonConfig;
   surface?: string;
   sessionEntry?: SessionEntry;
   inlineMode?: QueueMode;
@@ -246,7 +246,7 @@ function resolveQueueMode(params: {
 export async function getReplyFromConfig(
   ctx: MsgContext,
   opts?: GetReplyOptions,
-  configOverride?: ClawdisConfig,
+  configOverride?: HassoonConfig,
 ): Promise<ReplyPayload | ReplyPayload[] | undefined> {
   const cfg = configOverride ?? loadConfig();
   const workspaceDirRaw = cfg.agent?.workspace ?? DEFAULT_AGENT_WORKSPACE_DIR;
@@ -925,10 +925,10 @@ export async function getReplyFromConfig(
       cleanupTyping();
       return undefined;
     }
-    const restartMethod = triggerClawdisRestart();
+    const restartMethod = triggerHassoonRestart();
     cleanupTyping();
     return {
-      text: `⚙️ Restarting clawdis via ${restartMethod}; give me a few seconds to come back online.`,
+      text: `⚙️ Restarting hassoon via ${restartMethod}; give me a few seconds to come back online.`,
     };
   }
 
@@ -1017,7 +1017,7 @@ export async function getReplyFromConfig(
             : "Activation: trigger-only (you are invoked only when explicitly mentioned; recent context may be included).";
         const silenceLine =
           activation === "always"
-            ? `If no response is needed, reply with exactly "${SILENT_REPLY_TOKEN}" (no other text) so Clawdis stays silent.`
+            ? `If no response is needed, reply with exactly "${SILENT_REPLY_TOKEN}" (no other text) so Hassoon stays silent.`
             : undefined;
         const cautionLine =
           activation === "always"

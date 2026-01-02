@@ -1,15 +1,15 @@
 import { spawnSync } from "node:child_process";
 
-const DEFAULT_LAUNCHD_LABEL = "com.steipete.clawdis";
-const DEFAULT_SYSTEMD_UNIT = "clawdis-gateway.service";
+const DEFAULT_LAUNCHD_LABEL = "com.moeghashim.hassoon";
+const DEFAULT_SYSTEMD_UNIT = "hassoon-gateway.service";
 
-export function triggerClawdisRestart():
+export function triggerHassoonRestart():
   | "launchctl"
   | "systemd"
   | "supervisor" {
   if (process.platform !== "darwin") {
     if (process.platform === "linux") {
-      const unit = process.env.CLAWDIS_SYSTEMD_UNIT || DEFAULT_SYSTEMD_UNIT;
+      const unit = process.env.HASSOON_SYSTEMD_UNIT || DEFAULT_SYSTEMD_UNIT;
       const userRestart = spawnSync("systemctl", ["--user", "restart", unit], {
         stdio: "ignore",
       });
@@ -27,7 +27,7 @@ export function triggerClawdisRestart():
     return "supervisor";
   }
 
-  const label = process.env.CLAWDIS_LAUNCHD_LABEL || DEFAULT_LAUNCHD_LABEL;
+  const label = process.env.HASSOON_LAUNCHD_LABEL || DEFAULT_LAUNCHD_LABEL;
   const uid =
     typeof process.getuid === "function" ? process.getuid() : undefined;
   const target = uid !== undefined ? `gui/${uid}/${label}` : label;

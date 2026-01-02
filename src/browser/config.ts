@@ -1,8 +1,8 @@
 import type { BrowserConfig } from "../config/config.js";
 import {
-  DEFAULT_CLAWD_BROWSER_COLOR,
-  DEFAULT_CLAWD_BROWSER_CONTROL_URL,
-  DEFAULT_CLAWD_BROWSER_ENABLED,
+  DEFAULT_HASSOON_BROWSER_COLOR,
+  DEFAULT_HASSOON_BROWSER_CONTROL_URL,
+  DEFAULT_HASSOON_BROWSER_ENABLED,
 } from "./constants.js";
 
 export type ResolvedBrowserConfig = {
@@ -36,9 +36,9 @@ function isLoopbackHost(host: string) {
 
 function normalizeHexColor(raw: string | undefined) {
   const value = (raw ?? "").trim();
-  if (!value) return DEFAULT_CLAWD_BROWSER_COLOR;
+  if (!value) return DEFAULT_HASSOON_BROWSER_COLOR;
   const normalized = value.startsWith("#") ? value : `#${value}`;
-  if (!/^#[0-9a-fA-F]{6}$/.test(normalized)) return DEFAULT_CLAWD_BROWSER_COLOR;
+  if (!/^#[0-9a-fA-F]{6}$/.test(normalized)) return DEFAULT_HASSOON_BROWSER_COLOR;
   return normalized.toUpperCase();
 }
 
@@ -72,9 +72,9 @@ function parseHttpUrl(raw: string, label: string) {
 export function resolveBrowserConfig(
   cfg: BrowserConfig | undefined,
 ): ResolvedBrowserConfig {
-  const enabled = cfg?.enabled ?? DEFAULT_CLAWD_BROWSER_ENABLED;
+  const enabled = cfg?.enabled ?? DEFAULT_HASSOON_BROWSER_ENABLED;
   const controlInfo = parseHttpUrl(
-    cfg?.controlUrl ?? DEFAULT_CLAWD_BROWSER_CONTROL_URL,
+    cfg?.controlUrl ?? DEFAULT_HASSOON_BROWSER_CONTROL_URL,
     "browser.controlUrl",
   );
   const controlPort = controlInfo.port;

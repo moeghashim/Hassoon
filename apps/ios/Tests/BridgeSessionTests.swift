@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import Clawdis
+@testable import Hassoon
 
 @Suite struct BridgeSessionTests {
     @Test func initialStateIsIdle() async {

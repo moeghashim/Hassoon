@@ -1,7 +1,7 @@
-# 🦞 CLAWDIS — Personal AI Assistant
+# 🦞 HASSOON — Personal AI Assistant
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/steipete/clawdis/main/docs/whatsapp-clawd.jpg" alt="CLAWDIS" width="400">
+  <img src="https://raw.githubusercontent.com.moeghashim/hassoon/main/docs/whatsapp-hassoon.jpg" alt="HASSOON" width="400">
 </p>
 
 <p align="center">
@@ -9,20 +9,20 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/steipete/clawdis/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/steipete/clawdis/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
-  <a href="https://github.com/steipete/clawdis/releases"><img src="https://img.shields.io/github/v/release/steipete/clawdis?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
+  <a href="https://github.com/moeghashim/hassoon/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/moeghashim/hassoon/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
+  <a href="https://github.com/moeghashim/hassoon/releases"><img src="https://img.shields.io/github/v/release/moeghashim/hassoon?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
   <a href="https://discord.gg/qkhbAGHRBT"><img src="https://img.shields.io/discord/1456350064065904867?label=Discord&logo=discord&logoColor=white&color=5865F2&style=for-the-badge" alt="Discord"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
 
-**Clawdis** is a *personal AI assistant* you run on your own devices.
+**Hassoon** is a *personal AI assistant* you run on your own devices.
 It answers you on the surfaces you already use (WhatsApp, Telegram, Discord, iMessage, WebChat), can speak and listen on macOS/iOS, and can render a live Canvas you control. The Gateway is just the control plane — the product is the assistant.
 
 If you want a private, single-user assistant that feels local, fast, and always-on, this is it.
 
-Website: https://clawd.me · Docs: [`docs/index.md`](docs/index.md) · FAQ: [`docs/faq.md`](docs/faq.md) · Wizard: [`docs/wizard.md`](docs/wizard.md) · Discord: https://discord.gg/qkhbAGHRBT
+Website: https://hassoon.me · Docs: [`docs/index.md`](docs/index.md) · FAQ: [`docs/faq.md`](docs/faq.md) · Wizard: [`docs/wizard.md`](docs/wizard.md) · Discord: https://discord.gg/qkhbAGHRBT
 
-Preferred setup: run the onboarding wizard (`clawdis onboard`). It walks through gateway, workspace, providers, and skills. The CLI wizard is the recommended path and works on **macOS, Windows, and Linux**.
+Preferred setup: run the onboarding wizard (`hassoon onboard`). It walks through gateway, workspace, providers, and skills. The CLI wizard is the recommended path and works on **macOS, Windows, and Linux**.
 
 Using Claude Pro/Max subscription? See `docs/onboarding.md` for the Anthropic OAuth setup.
 
@@ -36,13 +36,13 @@ Your surfaces
 └──────────────┬────────────────┘
                │
                ├─ Pi agent (RPC)
-               ├─ CLI (clawdis …)
+               ├─ CLI (hassoon …)
                ├─ WebChat (browser)
-               ├─ macOS app (Clawdis.app)
+               ├─ macOS app (Hassoon.app)
                └─ iOS node (Canvas + voice)
 ```
 
-## What Clawdis does
+## What Hassoon does
 
 - **Personal assistant** — one user, one identity, one memory surface.
 - **Multi-surface inbox** — WhatsApp, Telegram, Discord, iMessage, WebChat, macOS, iOS. Signal support via `signal-cli` (see `docs/signal.md`). iMessage uses `imsg` (see `docs/imessage.md`).
@@ -51,7 +51,7 @@ Your surfaces
 - **Automation-ready** — browser control, media handling, and tool streaming.
 - **Local-first control plane** — the Gateway owns state, everything else connects.
 - **Group chats** — mention-based by default, `/activation always|mention` per group (owner-only).
-- **Nix mode** — opt-in declarative config + read-only UI when `CLAWDIS_NIX_MODE=1`.
+- **Nix mode** — opt-in declarative config + read-only UI when `HASSOON_NIX_MODE=1`.
 
 ## How it works (short)
 
@@ -70,25 +70,25 @@ pnpm build
 pnpm ui:build
 
 # Recommended: run the onboarding wizard
-pnpm clawdis onboard
+pnpm hassoon onboard
 
-# Link WhatsApp (stores creds in ~/.clawdis/credentials)
-pnpm clawdis login
+# Link WhatsApp (stores creds in ~/.hassoon/credentials)
+pnpm hassoon login
 
 # Start the gateway
-pnpm clawdis gateway --port 18789 --verbose
+pnpm hassoon gateway --port 18789 --verbose
 
 # Dev loop (auto-reload on TS changes)
 pnpm gateway:watch
 
 # Send a message
-pnpm clawdis send --to +1234567890 --message "Hello from Clawdis"
+pnpm hassoon send --to +1234567890 --message "Hello from Hassoon"
 
 # Talk to the assistant (optionally deliver back to WhatsApp/Telegram/Discord)
-pnpm clawdis agent --message "Ship checklist" --thinking high
+pnpm hassoon agent --message "Ship checklist" --thinking high
 ```
 
-If you run from source, prefer `pnpm clawdis …` (not global `clawdis`).
+If you run from source, prefer `pnpm hassoon …` (not global `hassoon`).
 
 ## Chat commands
 
@@ -115,14 +115,14 @@ Send these in WhatsApp/Telegram/WebChat (group commands are owner-only):
 - **Discovery + pairing**: Bonjour discovery via `BridgeDiscoveryModel` (NWBrowser). `BridgeConnectionController` auto‑connects using Keychain token or allows manual host/port.
 - **Node runtime**: `BridgeSession` (actor) maintains the `NWConnection`, hello handshake, ping/pong, RPC requests, and `invoke` callbacks.
 - **Capabilities + commands**: advertises `canvas`, `screen`, `camera`, `voiceWake` (settings‑driven) and executes `canvas.*`, `canvas.a2ui.*`, `camera.*`, `screen.record` (`NodeAppModel.handleInvoke`).
-- **Canvas**: `WKWebView` with bundled Canvas scaffold + A2UI, JS eval, snapshot capture, and `clawdis://` deep‑link interception (`ScreenController`).
-- **Voice + deep links**: voice wake sends `voice.transcript` events; `clawdis://agent` links emit `agent.request`. Voice wake triggers sync via `voicewake.get` + `voicewake.changed`.
+- **Canvas**: `WKWebView` with bundled Canvas scaffold + A2UI, JS eval, snapshot capture, and `hassoon://` deep‑link interception (`ScreenController`).
+- **Voice + deep links**: voice wake sends `voice.transcript` events; `hassoon://agent` links emit `agent.request`. Voice wake triggers sync via `voicewake.get` + `voicewake.changed`.
 
 ## Companion apps
 
 The **macOS app is critical**: it runs the menu‑bar control plane, owns local permissions (TCC), hosts Voice Wake, exposes WebChat/debug tools, and coordinates local/remote gateway mode. Most “assistant” UX lives here.
 
-### macOS (Clawdis.app)
+### macOS (Hassoon.app)
 
 - Menu bar control for the Gateway and health.
 - Voice Wake + push-to-talk overlay.
@@ -135,7 +135,7 @@ Build/run: `./scripts/restart-mac.sh` (packages + launches).
 
 - Pairs as a node via the Bridge.
 - Voice trigger forwarding + Canvas surface.
-- Controlled via `clawdis nodes …`.
+- Controlled via `hassoon nodes …`.
 
 Runbook: `docs/ios/connect.md`.
 
@@ -147,13 +147,13 @@ Runbook: `docs/ios/connect.md`.
 
 ## Agent workspace + skills
 
-- Workspace root: `~/clawd` (configurable via `agent.workspace`).
+- Workspace root: `~/hassoon` (configurable via `agent.workspace`).
 - Injected prompt files: `AGENTS.md`, `SOUL.md`, `TOOLS.md`.
-- Skills: `~/clawd/skills/<skill>/SKILL.md`.
+- Skills: `~/hassoon/skills/<skill>/SKILL.md`.
 
 ## Configuration
 
-Minimal `~/.clawdis/clawdis.json`:
+Minimal `~/.hassoon/hassoon.json`:
 
 ```json5
 {
@@ -165,7 +165,7 @@ Minimal `~/.clawdis/clawdis.json`:
 
 ### WhatsApp
 
-- Link the device: `pnpm clawdis login` (stores creds in `~/.clawdis/credentials`).
+- Link the device: `pnpm hassoon login` (stores creds in `~/.hassoon/credentials`).
 - Allowlist who can talk to the assistant via `whatsapp.allowFrom`.
 
 ### Telegram
@@ -223,18 +223,18 @@ Browser control (optional):
 ## Email hooks (Gmail)
 
 ```bash
-clawdis hooks gmail setup --account you@gmail.com
-clawdis hooks gmail run
+hassoon hooks gmail setup --account you@gmail.com
+hassoon hooks gmail run
 ```
 - [`docs/security.md`](docs/security.md)
 - [`docs/troubleshooting.md`](docs/troubleshooting.md)
 - [`docs/ios/connect.md`](docs/ios/connect.md)
-- [`docs/clawdis-mac.md`](docs/clawdis-mac.md)
+- [`docs/hassoon-mac.md`](docs/hassoon-mac.md)
 
-## Clawd
+## Hassoon
 
-Clawdis was built for **Clawd**, a space lobster AI assistant.
+Hassoon was built for **Hassoon**, a space lobster AI assistant.
 
-- https://clawd.me
+- https://hassoon.me
 - https://soul.md
 - https://steipete.me

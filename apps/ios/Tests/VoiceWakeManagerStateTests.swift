@@ -1,7 +1,7 @@
 import Foundation
 import Testing
 import SwabbleKit
-@testable import Clawdis
+@testable import Hassoon
 
 @Suite(.serialized) struct VoiceWakeManagerStateTests {
     @Test @MainActor func suspendAndResumeCycleUpdatesState() async {
@@ -35,7 +35,7 @@ import SwabbleKit
 
     @Test @MainActor func handleRecognitionCallbackDispatchesCommand() async {
         let manager = VoiceWakeManager()
-        manager.triggerWords = ["clawd"]
+        manager.triggerWords = ["hassoon"]
         manager.isEnabled = true
 
         actor CaptureBox {
@@ -47,11 +47,11 @@ import SwabbleKit
             await capture.set(cmd)
         }
 
-        let transcript = "clawd hello"
-        let clawdRange = transcript.range(of: "clawd")!
+        let transcript = "hassoon hello"
+        let hassoonRange = transcript.range(of: "hassoon")!
         let helloRange = transcript.range(of: "hello")!
         let segments = [
-            WakeWordSegment(text: "clawd", start: 0.0, duration: 0.2, range: clawdRange),
+            WakeWordSegment(text: "hassoon", start: 0.0, duration: 0.2, range: hassoonRange),
             WakeWordSegment(text: "hello", start: 0.8, duration: 0.2, range: helloRange),
         ]
 

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Build and bundle Clawdis into a minimal .app we can open.
-# Outputs to dist/Clawdis.app
+# Build and bundle Hassoon into a minimal .app we can open.
+# Outputs to dist/Hassoon.app
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-APP_ROOT="$ROOT_DIR/dist/Clawdis.app"
+APP_ROOT="$ROOT_DIR/dist/Hassoon.app"
 BUILD_PATH="$ROOT_DIR/apps/macos/.build"
-PRODUCT="Clawdis"
-BUNDLE_ID="${BUNDLE_ID:-com.steipete.clawdis.debug}"
+PRODUCT="Hassoon"
+BUNDLE_ID="${BUNDLE_ID:-com.moeghashim.hassoon.debug}"
 PKG_VERSION="$(cd "$ROOT_DIR" && node -p "require('./package.json').version" 2>/dev/null || echo "0.0.0")"
 BUILD_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_COMMIT=$(cd "$ROOT_DIR" && git rev-parse --short HEAD 2>/dev/null || echo "unknown")
@@ -17,7 +17,7 @@ APP_VERSION="${APP_VERSION:-$PKG_VERSION}"
 APP_BUILD="${APP_BUILD:-$GIT_BUILD_NUMBER}"
 BUILD_CONFIG="${BUILD_CONFIG:-debug}"
 SPARKLE_PUBLIC_ED_KEY="${SPARKLE_PUBLIC_ED_KEY:-AGCY8w5vHirVfGGDGc8Szc5iuOqupZSh9pMj/Qs67XI=}"
-SPARKLE_FEED_URL="${SPARKLE_FEED_URL:-https://raw.githubusercontent.com/steipete/clawdis/main/appcast.xml}"
+SPARKLE_FEED_URL="${SPARKLE_FEED_URL:-https://raw.githubusercontent.com.moeghashim/hassoon/main/appcast.xml}"
 AUTO_CHECKS=true
 if [[ "$BUNDLE_ID" == *.debug ]]; then
   SPARKLE_FEED_URL=""
@@ -55,7 +55,7 @@ mkdir -p "$APP_ROOT/Contents/Resources/Relay"
 mkdir -p "$APP_ROOT/Contents/Frameworks"
 
 echo "📄 Copying Info.plist template"
-INFO_PLIST_SRC="$ROOT_DIR/apps/macos/Sources/Clawdis/Resources/Info.plist"
+INFO_PLIST_SRC="$ROOT_DIR/apps/macos/Sources/Hassoon/Resources/Info.plist"
 if [ ! -f "$INFO_PLIST_SRC" ]; then
   echo "ERROR: Info.plist template missing at $INFO_PLIST_SRC" >&2
   exit 1
@@ -64,8 +64,8 @@ cp "$INFO_PLIST_SRC" "$APP_ROOT/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier ${BUNDLE_ID}" "$APP_ROOT/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${APP_VERSION}" "$APP_ROOT/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${APP_BUILD}" "$APP_ROOT/Contents/Info.plist" || true
-/usr/libexec/PlistBuddy -c "Set :ClawdisBuildTimestamp ${BUILD_TS}" "$APP_ROOT/Contents/Info.plist" || true
-/usr/libexec/PlistBuddy -c "Set :ClawdisGitCommit ${GIT_COMMIT}" "$APP_ROOT/Contents/Info.plist" || true
+/usr/libexec/PlistBuddy -c "Set :HassoonBuildTimestamp ${BUILD_TS}" "$APP_ROOT/Contents/Info.plist" || true
+/usr/libexec/PlistBuddy -c "Set :HassoonGitCommit ${GIT_COMMIT}" "$APP_ROOT/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Set :SUFeedURL ${SPARKLE_FEED_URL}" "$APP_ROOT/Contents/Info.plist" \
   || /usr/libexec/PlistBuddy -c "Add :SUFeedURL string ${SPARKLE_FEED_URL}" "$APP_ROOT/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Set :SUPublicEDKey ${SPARKLE_PUBLIC_ED_KEY}" "$APP_ROOT/Contents/Info.plist" \
@@ -77,10 +77,10 @@ else
 fi
 
 echo "🚚 Copying binary"
-cp "$BIN" "$APP_ROOT/Contents/MacOS/Clawdis"
-chmod +x "$APP_ROOT/Contents/MacOS/Clawdis"
+cp "$BIN" "$APP_ROOT/Contents/MacOS/Hassoon"
+chmod +x "$APP_ROOT/Contents/MacOS/Hassoon"
 # SwiftPM outputs ad-hoc signed binaries; strip the signature before install_name_tool to avoid warnings.
-/usr/bin/codesign --remove-signature "$APP_ROOT/Contents/MacOS/Clawdis" 2>/dev/null || true
+/usr/bin/codesign --remove-signature "$APP_ROOT/Contents/MacOS/Hassoon" 2>/dev/null || true
 
 SPARKLE_FRAMEWORK="$BUILD_PATH/$BUILD_CONFIG/Sparkle.framework"
 if [ -d "$SPARKLE_FRAMEWORK" ]; then
@@ -90,11 +90,11 @@ if [ -d "$SPARKLE_FRAMEWORK" ]; then
 fi
 
 echo "🖼  Copying app icon"
-cp "$ROOT_DIR/apps/macos/Sources/Clawdis/Resources/Clawdis.icns" "$APP_ROOT/Contents/Resources/Clawdis.icns"
+cp "$ROOT_DIR/apps/macos/Sources/Hassoon/Resources/Hassoon.icns" "$APP_ROOT/Contents/Resources/Hassoon.icns"
 
 echo "📦 Copying device model resources"
 rm -rf "$APP_ROOT/Contents/Resources/DeviceModels"
-cp -R "$ROOT_DIR/apps/macos/Sources/Clawdis/Resources/DeviceModels" "$APP_ROOT/Contents/Resources/DeviceModels"
+cp -R "$ROOT_DIR/apps/macos/Sources/Hassoon/Resources/DeviceModels" "$APP_ROOT/Contents/Resources/DeviceModels"
 
 RELAY_DIR="$APP_ROOT/Contents/Resources/Relay"
 
@@ -106,13 +106,13 @@ if [[ "${SKIP_GATEWAY_PACKAGE:-0}" != "1" ]]; then
 
   echo "🧰 Building bundled relay (bun --compile)"
   mkdir -p "$RELAY_DIR"
-	  RELAY_OUT="$RELAY_DIR/clawdis"
+	  RELAY_OUT="$RELAY_DIR/hassoon"
 	  bun build "$ROOT_DIR/dist/macos/relay.js" \
 	    --compile \
 	    --bytecode \
 	    --outfile "$RELAY_OUT" \
 	    -e electron \
-	    --define "__CLAWDIS_VERSION__=\\\"$PKG_VERSION\\\""
+	    --define "__HASSOON_VERSION__=\\\"$PKG_VERSION\\\""
 	  chmod +x "$RELAY_OUT"
 
   echo "🎨 Copying gateway A2UI host assets"
@@ -130,7 +130,7 @@ if [[ "${SKIP_GATEWAY_PACKAGE:-0}" != "1" ]]; then
   echo "📄 Writing embedded runtime package.json (Pi compatibility)"
   cat > "$RELAY_DIR/package.json" <<JSON
 {
-  "name": "clawdis-embedded",
+  "name": "hassoon-embedded",
   "version": "$PKG_VERSION",
   "piConfig": {
     "name": "pi",
@@ -154,8 +154,8 @@ else
   echo "🧰 Skipping gateway payload packaging (SKIP_GATEWAY_PACKAGE=1)"
 fi
 
-echo "⏹  Stopping any running Clawdis"
-killall -q Clawdis 2>/dev/null || true
+echo "⏹  Stopping any running Hassoon"
+killall -q Hassoon 2>/dev/null || true
 
 echo "🔏 Signing bundle (auto-selects signing identity if SIGN_IDENTITY is unset)"
 "$ROOT_DIR/scripts/codesign-mac-app.sh" "$APP_ROOT"

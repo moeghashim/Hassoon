@@ -1,6 +1,6 @@
-import { type ClawdisConfig, loadConfig } from "../config/config.js";
-import { resolveClawdisAgentDir } from "./agent-paths.js";
-import { ensureClawdisModelsJson } from "./models-config.js";
+import { type HassoonConfig, loadConfig } from "../config/config.js";
+import { resolveHassoonAgentDir } from "./agent-paths.js";
+import { ensureHassoonModelsJson } from "./models-config.js";
 
 export type ModelCatalogEntry = {
   id: string;
@@ -23,7 +23,7 @@ export function resetModelCatalogCacheForTest() {
 }
 
 export async function loadModelCatalog(params?: {
-  config?: ClawdisConfig;
+  config?: HassoonConfig;
   useCache?: boolean;
 }): Promise<ModelCatalogEntry[]> {
   if (params?.useCache === false) {
@@ -37,8 +37,8 @@ export async function loadModelCatalog(params?: {
     const models: ModelCatalogEntry[] = [];
     try {
       const cfg = params?.config ?? loadConfig();
-      await ensureClawdisModelsJson(cfg);
-      const agentDir = resolveClawdisAgentDir();
+      await ensureHassoonModelsJson(cfg);
+      const agentDir = resolveHassoonAgentDir();
       const authStorage = piSdk.discoverAuthStorage(agentDir);
       const registry = piSdk.discoverModels(authStorage, agentDir) as
         | {

@@ -8,7 +8,7 @@ import {
   type Skill,
 } from "@mariozechner/pi-coding-agent";
 
-import type { ClawdisConfig, SkillConfig } from "../config/config.js";
+import type { HassoonConfig, SkillConfig } from "../config/config.js";
 import { CONFIG_DIR, resolveUserPath } from "../utils.js";
 
 export type SkillInstallSpec = {
@@ -21,7 +21,7 @@ export type SkillInstallSpec = {
   module?: string;
 };
 
-export type ClawdisSkillMetadata = {
+export type HassoonSkillMetadata = {
   always?: boolean;
   skillKey?: string;
   primaryEnv?: string;
@@ -46,7 +46,7 @@ type ParsedSkillFrontmatter = Record<string, string>;
 export type SkillEntry = {
   skill: Skill;
   frontmatter: ParsedSkillFrontmatter;
-  clawdis?: ClawdisSkillMetadata;
+  hassoon?: HassoonSkillMetadata;
 };
 
 export type SkillSnapshot = {
@@ -56,7 +56,7 @@ export type SkillSnapshot = {
 };
 
 function resolveBundledSkillsDir(): string | undefined {
-  const override = process.env.CLAWDIS_BUNDLED_SKILLS_DIR?.trim();
+  const override = process.env.HASSOON_BUNDLED_SKILLS_DIR?.trim();
   if (override) return override;
 
   // bun --compile: ship a sibling `skills/` next to the executable.
@@ -172,7 +172,7 @@ const DEFAULT_CONFIG_VALUES: Record<string, boolean> = {
 };
 
 export function resolveSkillsInstallPreferences(
-  config?: ClawdisConfig,
+  config?: HassoonConfig,
 ): SkillsInstallPreferences {
   const raw = config?.skills?.install;
   const preferBrew = raw?.preferBrew ?? true;
@@ -194,7 +194,7 @@ export function resolveRuntimePlatform(): string {
 }
 
 export function resolveConfigPath(
-  config: ClawdisConfig | undefined,
+  config: HassoonConfig | undefined,
   pathStr: string,
 ) {
   const parts = pathStr.split(".").filter(Boolean);
@@ -207,7 +207,7 @@ export function resolveConfigPath(
 }
 
 export function isConfigPathTruthy(
-  config: ClawdisConfig | undefined,
+  config: HassoonConfig | undefined,
   pathStr: string,
 ): boolean {
   const value = resolveConfigPath(config, pathStr);
@@ -218,7 +218,7 @@ export function isConfigPathTruthy(
 }
 
 export function resolveSkillConfig(
-  config: ClawdisConfig | undefined,
+  config: HassoonConfig | undefined,
   skillKey: string,
 ): SkillConfig | undefined {
   const skills = config?.skills?.entries;
@@ -236,7 +236,7 @@ function normalizeAllowlist(input: unknown): string[] | undefined {
 }
 
 function isBundledSkill(entry: SkillEntry): boolean {
-  return entry.skill.source === "clawdis-bundled";
+  return entry.skill.source === "hassoon-bundled";
 }
 
 export function isBundledSkillAllowed(
@@ -264,44 +264,44 @@ export function hasBinary(bin: string): boolean {
   return false;
 }
 
-function resolveClawdisMetadata(
+function resolveHassoonMetadata(
   frontmatter: ParsedSkillFrontmatter,
-): ClawdisSkillMetadata | undefined {
+): HassoonSkillMetadata | undefined {
   const raw = getFrontmatterValue(frontmatter, "metadata");
   if (!raw) return undefined;
   try {
-    const parsed = JSON.parse(raw) as { clawdis?: unknown };
+    const parsed = JSON.parse(raw) as { hassoon?: unknown };
     if (!parsed || typeof parsed !== "object") return undefined;
-    const clawdis = (parsed as { clawdis?: unknown }).clawdis;
-    if (!clawdis || typeof clawdis !== "object") return undefined;
-    const clawdisObj = clawdis as Record<string, unknown>;
+    const hassoon = (parsed as { hassoon?: unknown }).hassoon;
+    if (!hassoon || typeof hassoon !== "object") return undefined;
+    const hassoonObj = hassoon as Record<string, unknown>;
     const requiresRaw =
-      typeof clawdisObj.requires === "object" && clawdisObj.requires !== null
-        ? (clawdisObj.requires as Record<string, unknown>)
+      typeof hassoonObj.requires === "object" && hassoonObj.requires !== null
+        ? (hassoonObj.requires as Record<string, unknown>)
         : undefined;
-    const installRaw = Array.isArray(clawdisObj.install)
-      ? (clawdisObj.install as unknown[])
+    const installRaw = Array.isArray(hassoonObj.install)
+      ? (hassoonObj.install as unknown[])
       : [];
     const install = installRaw
       .map((entry) => parseInstallSpec(entry))
       .filter((entry): entry is SkillInstallSpec => Boolean(entry));
-    const osRaw = normalizeStringList(clawdisObj.os);
+    const osRaw = normalizeStringList(hassoonObj.os);
     return {
       always:
-        typeof clawdisObj.always === "boolean" ? clawdisObj.always : undefined,
+        typeof hassoonObj.always === "boolean" ? hassoonObj.always : undefined,
       emoji:
-        typeof clawdisObj.emoji === "string" ? clawdisObj.emoji : undefined,
+        typeof hassoonObj.emoji === "string" ? hassoonObj.emoji : undefined,
       homepage:
-        typeof clawdisObj.homepage === "string"
-          ? clawdisObj.homepage
+        typeof hassoonObj.homepage === "string"
+          ? hassoonObj.homepage
           : undefined,
       skillKey:
-        typeof clawdisObj.skillKey === "string"
-          ? clawdisObj.skillKey
+        typeof hassoonObj.skillKey === "string"
+          ? hassoonObj.skillKey
           : undefined,
       primaryEnv:
-        typeof clawdisObj.primaryEnv === "string"
-          ? clawdisObj.primaryEnv
+        typeof hassoonObj.primaryEnv === "string"
+          ? hassoonObj.primaryEnv
           : undefined,
       os: osRaw.length > 0 ? osRaw : undefined,
       requires: requiresRaw
@@ -319,48 +319,48 @@ function resolveClawdisMetadata(
 }
 
 function resolveSkillKey(skill: Skill, entry?: SkillEntry): string {
-  return entry?.clawdis?.skillKey ?? skill.name;
+  return entry?.hassoon?.skillKey ?? skill.name;
 }
 
 function shouldIncludeSkill(params: {
   entry: SkillEntry;
-  config?: ClawdisConfig;
+  config?: HassoonConfig;
 }): boolean {
   const { entry, config } = params;
   const skillKey = resolveSkillKey(entry.skill, entry);
   const skillConfig = resolveSkillConfig(config, skillKey);
   const allowBundled = normalizeAllowlist(config?.skills?.allowBundled);
-  const osList = entry.clawdis?.os ?? [];
+  const osList = entry.hassoon?.os ?? [];
 
   if (skillConfig?.enabled === false) return false;
   if (!isBundledSkillAllowed(entry, allowBundled)) return false;
   if (osList.length > 0 && !osList.includes(resolveRuntimePlatform())) {
     return false;
   }
-  if (entry.clawdis?.always === true) {
+  if (entry.hassoon?.always === true) {
     return true;
   }
 
-  const requiredBins = entry.clawdis?.requires?.bins ?? [];
+  const requiredBins = entry.hassoon?.requires?.bins ?? [];
   if (requiredBins.length > 0) {
     for (const bin of requiredBins) {
       if (!hasBinary(bin)) return false;
     }
   }
 
-  const requiredEnv = entry.clawdis?.requires?.env ?? [];
+  const requiredEnv = entry.hassoon?.requires?.env ?? [];
   if (requiredEnv.length > 0) {
     for (const envName of requiredEnv) {
       if (process.env[envName]) continue;
       if (skillConfig?.env?.[envName]) continue;
-      if (skillConfig?.apiKey && entry.clawdis?.primaryEnv === envName) {
+      if (skillConfig?.apiKey && entry.hassoon?.primaryEnv === envName) {
         continue;
       }
       return false;
     }
   }
 
-  const requiredConfig = entry.clawdis?.requires?.config ?? [];
+  const requiredConfig = entry.hassoon?.requires?.config ?? [];
   if (requiredConfig.length > 0) {
     for (const configPath of requiredConfig) {
       if (!isConfigPathTruthy(config, configPath)) return false;
@@ -372,14 +372,14 @@ function shouldIncludeSkill(params: {
 
 function filterSkillEntries(
   entries: SkillEntry[],
-  config?: ClawdisConfig,
+  config?: HassoonConfig,
 ): SkillEntry[] {
   return entries.filter((entry) => shouldIncludeSkill({ entry, config }));
 }
 
 export function applySkillEnvOverrides(params: {
   skills: SkillEntry[];
-  config?: ClawdisConfig;
+  config?: HassoonConfig;
 }) {
   const { skills, config } = params;
   const updates: Array<{ key: string; prev: string | undefined }> = [];
@@ -397,7 +397,7 @@ export function applySkillEnvOverrides(params: {
       }
     }
 
-    const primaryEnv = entry.clawdis?.primaryEnv;
+    const primaryEnv = entry.hassoon?.primaryEnv;
     if (primaryEnv && skillConfig.apiKey && !process.env[primaryEnv]) {
       updates.push({ key: primaryEnv, prev: process.env[primaryEnv] });
       process.env[primaryEnv] = skillConfig.apiKey;
@@ -414,7 +414,7 @@ export function applySkillEnvOverrides(params: {
 
 export function applySkillEnvOverridesFromSnapshot(params: {
   snapshot?: SkillSnapshot;
-  config?: ClawdisConfig;
+  config?: HassoonConfig;
 }) {
   const { snapshot, config } = params;
   if (!snapshot) return () => {};
@@ -456,7 +456,7 @@ export function applySkillEnvOverridesFromSnapshot(params: {
 function loadSkillEntries(
   workspaceDir: string,
   opts?: {
-    config?: ClawdisConfig;
+    config?: HassoonConfig;
     managedSkillsDir?: string;
     bundledSkillsDir?: string;
   },
@@ -487,23 +487,23 @@ function loadSkillEntries(
   const bundledSkills = bundledSkillsDir
     ? loadSkills({
         dir: bundledSkillsDir,
-        source: "clawdis-bundled",
+        source: "hassoon-bundled",
       })
     : [];
   const extraSkills = extraDirs.flatMap((dir) => {
     const resolved = resolveUserPath(dir);
     return loadSkills({
       dir: resolved,
-      source: "clawdis-extra",
+      source: "hassoon-extra",
     });
   });
   const managedSkills = loadSkills({
     dir: managedSkillsDir,
-    source: "clawdis-managed",
+    source: "hassoon-managed",
   });
   const workspaceSkills = loadSkills({
     dir: workspaceSkillsDir,
-    source: "clawdis-workspace",
+    source: "hassoon-workspace",
   });
 
   const merged = new Map<string, Skill>();
@@ -525,7 +525,7 @@ function loadSkillEntries(
       return {
         skill,
         frontmatter,
-        clawdis: resolveClawdisMetadata(frontmatter),
+        hassoon: resolveHassoonMetadata(frontmatter),
       };
     },
   );
@@ -535,7 +535,7 @@ function loadSkillEntries(
 export function buildWorkspaceSkillSnapshot(
   workspaceDir: string,
   opts?: {
-    config?: ClawdisConfig;
+    config?: HassoonConfig;
     managedSkillsDir?: string;
     bundledSkillsDir?: string;
     entries?: SkillEntry[];
@@ -548,7 +548,7 @@ export function buildWorkspaceSkillSnapshot(
     prompt: formatSkillsForPrompt(resolvedSkills),
     skills: eligible.map((entry) => ({
       name: entry.skill.name,
-      primaryEnv: entry.clawdis?.primaryEnv,
+      primaryEnv: entry.hassoon?.primaryEnv,
     })),
     resolvedSkills,
   };
@@ -557,7 +557,7 @@ export function buildWorkspaceSkillSnapshot(
 export function buildWorkspaceSkillsPrompt(
   workspaceDir: string,
   opts?: {
-    config?: ClawdisConfig;
+    config?: HassoonConfig;
     managedSkillsDir?: string;
     bundledSkillsDir?: string;
     entries?: SkillEntry[];
@@ -571,7 +571,7 @@ export function buildWorkspaceSkillsPrompt(
 export function loadWorkspaceSkillEntries(
   workspaceDir: string,
   opts?: {
-    config?: ClawdisConfig;
+    config?: HassoonConfig;
     managedSkillsDir?: string;
     bundledSkillsDir?: string;
   },
@@ -581,12 +581,12 @@ export function loadWorkspaceSkillEntries(
 
 export function filterWorkspaceSkillEntries(
   entries: SkillEntry[],
-  config?: ClawdisConfig,
+  config?: HassoonConfig,
 ): SkillEntry[] {
   return filterSkillEntries(entries, config);
 }
 export function resolveBundledAllowlist(
-  config?: ClawdisConfig,
+  config?: HassoonConfig,
 ): string[] | undefined {
   return normalizeAllowlist(config?.skills?.allowBundled);
 }

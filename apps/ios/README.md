@@ -1,4 +1,4 @@
-# Clawdis (iOS)
+# Hassoon (iOS)
 
 Internal-only SwiftUI app scaffold.
 
@@ -11,11 +11,11 @@ brew install swiftformat swiftlint
 ```bash
 cd apps/ios
 xcodegen generate
-open Clawdis.xcodeproj
+open Hassoon.xcodeproj
 ```
 
 ## Shared packages
-- `../shared/ClawdisKit` — shared types/constants used by iOS (and later macOS bridge + gateway routing).
+- `../shared/HassoonKit` — shared types/constants used by iOS (and later macOS bridge + gateway routing).
 
 ## fastlane
 ```bash

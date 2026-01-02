@@ -1,5 +1,5 @@
 import Testing
-@testable import Clawdis
+@testable import Hassoon
 
 @Suite(.serialized) struct ScreenRecordServiceTests {
     @Test func clampDefaultsAndBounds() {

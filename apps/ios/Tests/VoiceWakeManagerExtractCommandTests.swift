@@ -1,7 +1,7 @@
 import Foundation
 import Testing
 import SwabbleKit
-@testable import Clawdis
+@testable import Hassoon
 
 @Suite struct VoiceWakeManagerExtractCommandTests {
     @Test func extractCommandReturnsNilWhenNoTriggerFound() {
@@ -9,67 +9,67 @@ import SwabbleKit
         let segments = makeSegments(
             transcript: transcript,
             words: [("hello", 0.0, 0.1), ("world", 0.2, 0.1)])
-        #expect(VoiceWakeManager.extractCommand(from: transcript, segments: segments, triggers: ["clawd"]) == nil)
+        #expect(VoiceWakeManager.extractCommand(from: transcript, segments: segments, triggers: ["hassoon"]) == nil)
     }
 
     @Test func extractCommandTrimsTokensAndResult() {
-        let transcript = "hey clawd do thing"
+        let transcript = "hey hassoon do thing"
         let segments = makeSegments(
             transcript: transcript,
             words: [
                 ("hey", 0.0, 0.1),
-                ("clawd", 0.2, 0.1),
+                ("hassoon", 0.2, 0.1),
                 ("do", 0.9, 0.1),
                 ("thing", 1.1, 0.1),
             ])
         let cmd = VoiceWakeManager.extractCommand(
             from: transcript,
             segments: segments,
-            triggers: ["  clawd  "],
+            triggers: ["  hassoon  "],
             minPostTriggerGap: 0.3)
         #expect(cmd == "do thing")
     }
 
     @Test func extractCommandReturnsNilWhenGapTooShort() {
-        let transcript = "hey clawd do thing"
+        let transcript = "hey hassoon do thing"
         let segments = makeSegments(
             transcript: transcript,
             words: [
                 ("hey", 0.0, 0.1),
-                ("clawd", 0.2, 0.1),
+                ("hassoon", 0.2, 0.1),
                 ("do", 0.35, 0.1),
                 ("thing", 0.5, 0.1),
             ])
         let cmd = VoiceWakeManager.extractCommand(
             from: transcript,
             segments: segments,
-            triggers: ["clawd"],
+            triggers: ["hassoon"],
             minPostTriggerGap: 0.3)
         #expect(cmd == nil)
     }
 
     @Test func extractCommandReturnsNilWhenNothingAfterTrigger() {
-        let transcript = "hey clawd"
+        let transcript = "hey hassoon"
         let segments = makeSegments(
             transcript: transcript,
-            words: [("hey", 0.0, 0.1), ("clawd", 0.2, 0.1)])
-        #expect(VoiceWakeManager.extractCommand(from: transcript, segments: segments, triggers: ["clawd"]) == nil)
+            words: [("hey", 0.0, 0.1), ("hassoon", 0.2, 0.1)])
+        #expect(VoiceWakeManager.extractCommand(from: transcript, segments: segments, triggers: ["hassoon"]) == nil)
     }
 
     @Test func extractCommandIgnoresEmptyTriggers() {
-        let transcript = "hey clawd do thing"
+        let transcript = "hey hassoon do thing"
         let segments = makeSegments(
             transcript: transcript,
             words: [
                 ("hey", 0.0, 0.1),
-                ("clawd", 0.2, 0.1),
+                ("hassoon", 0.2, 0.1),
                 ("do", 0.9, 0.1),
                 ("thing", 1.1, 0.1),
             ])
         let cmd = VoiceWakeManager.extractCommand(
             from: transcript,
             segments: segments,
-            triggers: ["", "   ", "clawd"],
+            triggers: ["", "   ", "hassoon"],
             minPostTriggerGap: 0.3)
         #expect(cmd == "do thing")
     }

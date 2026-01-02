@@ -5,9 +5,9 @@ import { fileURLToPath } from "node:url";
 
 import { detectMime } from "../media/mime.js";
 
-export const A2UI_PATH = "/__clawdis__/a2ui";
-export const CANVAS_HOST_PATH = "/__clawdis__/canvas";
-export const CANVAS_WS_PATH = "/__clawdis/ws";
+export const A2UI_PATH = "/__hassoon__/a2ui";
+export const CANVAS_HOST_PATH = "/__hassoon__/canvas";
+export const CANVAS_WS_PATH = "/__hassoon/ws";
 
 let cachedA2uiRootReal: string | null | undefined;
 let resolvingA2uiRoot: Promise<string | null> | null = null;
@@ -98,9 +98,9 @@ export function injectCanvasLiveReload(html: string): string {
 (() => {
   // Cross-platform action bridge helper.
   // Works on:
-  // - iOS: window.webkit.messageHandlers.clawdisCanvasA2UIAction.postMessage(...)
-  // - Android: window.clawdisCanvasA2UIAction.postMessage(...)
-  const actionHandlerName = "clawdisCanvasA2UIAction";
+  // - iOS: window.webkit.messageHandlers.hassoonCanvasA2UIAction.postMessage(...)
+  // - Android: window.hassoonCanvasA2UIAction.postMessage(...)
+  const actionHandlerName = "hassoonCanvasA2UIAction";
   function postToNode(payload) {
     try {
       const raw = typeof payload === "string" ? payload : JSON.stringify(payload);
@@ -125,11 +125,11 @@ export function injectCanvasLiveReload(html: string): string {
     const action = { ...userAction, id };
     return postToNode({ userAction: action });
   }
-  globalThis.Clawdis = globalThis.Clawdis ?? {};
-  globalThis.Clawdis.postMessage = postToNode;
-  globalThis.Clawdis.sendUserAction = sendUserAction;
-  globalThis.clawdisPostMessage = postToNode;
-  globalThis.clawdisSendUserAction = sendUserAction;
+  globalThis.Hassoon = globalThis.Hassoon ?? {};
+  globalThis.Hassoon.postMessage = postToNode;
+  globalThis.Hassoon.sendUserAction = sendUserAction;
+  globalThis.hassoonPostMessage = postToNode;
+  globalThis.hassoonSendUserAction = sendUserAction;
 
   try {
     const proto = location.protocol === "https:" ? "wss" : "ws";

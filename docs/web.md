@@ -18,7 +18,7 @@ The UI talks directly to the Gateway WS and supports:
 - Cron (`cron.*`)
 - Skills (`skills.status`, `skills.update`, `skills.install`)
 - Nodes (`node.list`, `node.describe`, `node.invoke`)
-- Config (`config.get`, `config.set`) for `~/.clawdis/clawdis.json`
+- Config (`config.get`, `config.set`) for `~/.hassoon/hassoon.json`
 - Debug (status/health/models snapshots + manual calls)
 
 ## Webhooks
@@ -57,7 +57,7 @@ Keep the Gateway on loopback and let Tailscale Serve proxy it:
 Then start the gateway:
 
 ```bash
-clawdis gateway
+hassoon gateway
 ```
 
 Open:
@@ -77,8 +77,8 @@ Open:
 Then start the gateway (token required for non-loopback binds):
 
 ```bash
-export CLAWDIS_GATEWAY_TOKEN="…your token…"
-clawdis gateway
+export HASSOON_GATEWAY_TOKEN="…your token…"
+hassoon gateway
 ```
 
 Open:
@@ -91,14 +91,14 @@ Open:
   gateway: {
     bind: "loopback",
     tailscale: { mode: "funnel" },
-    auth: { mode: "password" } // or CLAWDIS_GATEWAY_PASSWORD
+    auth: { mode: "password" } // or HASSOON_GATEWAY_PASSWORD
   }
 }
 ```
 
 ## Security notes
 
-- Binding the Gateway to a non-loopback address **requires** auth (`CLAWDIS_GATEWAY_TOKEN` or `gateway.auth`).
+- Binding the Gateway to a non-loopback address **requires** auth (`HASSOON_GATEWAY_TOKEN` or `gateway.auth`).
 - The UI sends `connect.params.auth.token` or `connect.params.auth.password`.
 - Use `gateway.auth.allowTailscale: false` to require explicit credentials even in Serve mode.
 - `gateway.tailscale.mode: "funnel"` requires `gateway.auth.mode: "password"` (shared password).

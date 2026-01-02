@@ -1,14 +1,14 @@
 ---
-summary: "All configuration options for ~/.clawdis/clawdis.json with examples"
+summary: "All configuration options for ~/.hassoon/hassoon.json with examples"
 read_when:
   - Adding or modifying config fields
 ---
 <!-- {% raw %} -->
 # Configuration 🔧
 
-CLAWDIS reads an optional **JSON5** config from `~/.clawdis/clawdis.json` (comments + trailing commas allowed).
+HASSOON reads an optional **JSON5** config from `~/.hassoon/hassoon.json` (comments + trailing commas allowed).
 
-If the file is missing, CLAWDIS uses safe-ish defaults (embedded Pi agent + per-sender sessions + workspace `~/clawd`). You usually only need a config to:
+If the file is missing, HASSOON uses safe-ish defaults (embedded Pi agent + per-sender sessions + workspace `~/hassoon`). You usually only need a config to:
 - restrict who can trigger the bot (`whatsapp.allowFrom`, `telegram.allowFrom`, etc.)
 - tune group mention behavior (`routing.groupChat`)
 - customize message prefixes (`messages`)
@@ -20,7 +20,7 @@ If the file is missing, CLAWDIS uses safe-ish defaults (embedded Pi agent + per-
 
 ```json5
 {
-  agent: { workspace: "~/clawd" },
+  agent: { workspace: "~/hassoon" },
   whatsapp: { allowFrom: ["+15555550123"] }
 }
 ```
@@ -31,7 +31,7 @@ If the file is missing, CLAWDIS uses safe-ish defaults (embedded Pi agent + per-
 
 Optional agent identity used for defaults and UX. This is written by the macOS onboarding assistant.
 
-If set, CLAWDIS derives defaults (only when you haven’t set them explicitly):
+If set, HASSOON derives defaults (only when you haven’t set them explicitly):
 - `messages.responsePrefix` from `identity.emoji`
 - `routing.groupChat.mentionPatterns` from `identity.name` (so “@Samantha” works in groups)
 
@@ -59,8 +59,8 @@ Metadata written by CLI wizards (`onboard`, `configure`, `doctor`, `update`).
 
 ### `logging`
 
-- Default log file: `/tmp/clawdis/clawdis-YYYY-MM-DD.log`
-- If you want a stable path, set `logging.file` to `/tmp/clawdis/clawdis.log`.
+- Default log file: `/tmp/hassoon/hassoon-YYYY-MM-DD.log`
+- If you want a stable path, set `logging.file` to `/tmp/hassoon/hassoon.log`.
 - Console output can be tuned separately via:
   - `logging.consoleLevel` (defaults to `info`, bumps to `debug` when `--verbose`)
   - `logging.consoleStyle` (`pretty` | `compact` | `json`)
@@ -69,7 +69,7 @@ Metadata written by CLI wizards (`onboard`, `configure`, `doctor`, `update`).
 {
   logging: {
     level: "info",
-    file: "/tmp/clawdis/clawdis.log",
+    file: "/tmp/hassoon/hassoon.log",
     consoleLevel: "info",
     consoleStyle: "pretty"
   }
@@ -94,7 +94,7 @@ Group messages default to **require mention** (either metadata mention or regex 
 {
   routing: {
     groupChat: {
-      mentionPatterns: ["@clawd", "clawdbot", "clawd"],
+      mentionPatterns: ["@hassoon", "hassoonbot", "hassoon"],
       historyLimit: 50
     }
   }
@@ -145,7 +145,7 @@ Set `web.enabled: false` to keep it off by default.
 
 ### `telegram` (bot transport)
 
-Clawdis starts Telegram only when a `telegram` config section exists. The bot token is resolved from `TELEGRAM_BOT_TOKEN` or `telegram.botToken`.
+Hassoon starts Telegram only when a `telegram` config section exists. The bot token is resolved from `TELEGRAM_BOT_TOKEN` or `telegram.botToken`.
 Set `telegram.enabled: false` to disable automatic startup.
 
 ```json5
@@ -177,7 +177,7 @@ Configure the Discord bot by setting the bot token and optional gating:
     enableReactions: true,                  // allow agent-triggered reactions
     slashCommand: {                         // user-installed app slash commands
       enabled: true,
-      name: "clawd",
+      name: "hassoon",
       sessionPrefix: "discord:slash",
       ephemeral: true
     },
@@ -185,11 +185,11 @@ Configure the Discord bot by setting the bot token and optional gating:
       enabled: true,                        // disable all DMs when false
       allowFrom: ["1234567890", "steipete"], // optional DM allowlist (ids or names)
       groupEnabled: false,                 // enable group DMs
-      groupChannels: ["clawd-dm"]          // optional group DM allowlist
+      groupChannels: ["hassoon-dm"]          // optional group DM allowlist
     },
     guilds: {
       "123456789012345678": {               // guild id (preferred) or slug
-        slug: "friends-of-clawd",
+        slug: "friends-of-hassoon",
         requireMention: false,              // per-guild default
         users: ["987654321098765432"],      // optional per-guild user allowlist
         channels: {
@@ -203,12 +203,12 @@ Configure the Discord bot by setting the bot token and optional gating:
 }
 ```
 
-Clawdis starts Discord only when a `discord` config section exists. The token is resolved from `DISCORD_BOT_TOKEN` or `discord.token` (unless `discord.enabled` is `false`). Use `user:<id>` (DM) or `channel:<id>` (guild channel) when specifying delivery targets for cron/CLI commands.
+Hassoon starts Discord only when a `discord` config section exists. The token is resolved from `DISCORD_BOT_TOKEN` or `discord.token` (unless `discord.enabled` is `false`). Use `user:<id>` (DM) or `channel:<id>` (guild channel) when specifying delivery targets for cron/CLI commands.
 Guild slugs are lowercase with spaces replaced by `-`; channel keys use the slugged channel name (no leading `#`). Prefer guild ids as keys to avoid rename ambiguity.
 
 ### `imessage` (imsg CLI)
 
-Clawdis spawns `imsg rpc` (JSON-RPC over stdio). No daemon or port required.
+Hassoon spawns `imsg rpc` (JSON-RPC over stdio). No daemon or port required.
 
 ```json5
 {
@@ -234,11 +234,11 @@ Notes:
 
 Sets the **single global workspace directory** used by the agent for file operations.
 
-Default: `~/clawd`.
+Default: `~/hassoon`.
 
 ```json5
 {
-  agent: { workspace: "~/clawd" }
+  agent: { workspace: "~/hassoon" }
 }
 ```
 
@@ -249,7 +249,7 @@ Controls inbound/outbound prefixes and timestamps.
 ```json5
 {
   messages: {
-    messagePrefix: "[clawdis]",
+    messagePrefix: "[hassoon]",
     responsePrefix: "🦞",
     timestampPrefix: "Europe/London"
   }
@@ -260,14 +260,14 @@ Controls inbound/outbound prefixes and timestamps.
 
 Defaults for Talk mode (macOS/iOS/Android). Voice IDs fall back to `ELEVENLABS_VOICE_ID` or `SAG_VOICE_ID` when unset.
 `apiKey` falls back to `ELEVENLABS_API_KEY` (or the gateway’s shell profile) when unset.
-`voiceAliases` lets Talk directives use friendly names (e.g. `"voice":"Clawd"`).
+`voiceAliases` lets Talk directives use friendly names (e.g. `"voice":"Hassoon"`).
 
 ```json5
 {
   talk: {
     voiceId: "elevenlabs_voice_id",
     voiceAliases: {
-      Clawd: "EXAVITQu4vr4xnSDxMaL",
+      Hassoon: "EXAVITQu4vr4xnSDxMaL",
       Roger: "CwhRBWXzGAHq8TQ4Fs17"
     },
     modelId: "eleven_v3",
@@ -318,7 +318,7 @@ Controls the embedded agent runtime (model/thinking/verbose/timeouts).
 
 `agent.model` should be set as `provider/model` (e.g. `anthropic/claude-opus-4-5`).
 If `modelAliases` is configured, you may also use the alias key (e.g. `Opus`).
-If you omit the provider, CLAWDIS currently assumes `anthropic` as a temporary
+If you omit the provider, HASSOON currently assumes `anthropic` as a temporary
 deprecation fallback.
 Z.AI models are available as `zai/<model>` (e.g. `zai/glm-4.7`) and require
 `ZAI_API_KEY` (or legacy `Z_AI_API_KEY`) in the environment.
@@ -342,13 +342,13 @@ per session key at a time). Default: 1.
 
 ### `models` (custom providers + base URLs)
 
-Clawdis uses the **pi-coding-agent** model catalog. You can add custom providers
+Hassoon uses the **pi-coding-agent** model catalog. You can add custom providers
 (LiteLLM, local OpenAI-compatible servers, Anthropic proxies, etc.) by writing
-`~/.clawdis/agent/models.json` or by defining the same schema inside your
-Clawdis config under `models.providers`.
+`~/.hassoon/agent/models.json` or by defining the same schema inside your
+Hassoon config under `models.providers`.
 
-When `models.providers` is present, Clawdis writes/merges a `models.json` into
-`~/.clawdis/agent/` on startup:
+When `models.providers` is present, Hassoon writes/merges a `models.json` into
+`~/.hassoon/agent/` on startup:
 - default behavior: **merge** (keeps existing providers, overrides on name)
 - set `models.mode: "replace"` to overwrite the file contents
 
@@ -432,7 +432,7 @@ Notes:
 - Supported APIs: `openai-completions`, `openai-responses`, `anthropic-messages`,
   `google-generative-ai`
 - Use `authHeader: true` + `headers` for custom auth needs.
-- Override the agent config root with `CLAWDIS_AGENT_DIR` (or `PI_CODING_AGENT_DIR`)
+- Override the agent config root with `HASSOON_AGENT_DIR` (or `PI_CODING_AGENT_DIR`)
   if you want `models.json` stored elsewhere.
 
 ### `session`
@@ -445,7 +445,7 @@ Controls session scoping, idle expiry, reset triggers, and where the session sto
     scope: "per-sender",
     idleMinutes: 60,
     resetTriggers: ["/new", "/reset"],
-    store: "~/.clawdis/sessions/sessions.json",
+    store: "~/.hassoon/sessions/sessions.json",
     mainKey: "main"
   }
 }
@@ -454,7 +454,7 @@ Controls session scoping, idle expiry, reset triggers, and where the session sto
 ### `skills` (skills config)
 
 Controls bundled allowlist, install preferences, extra skill folders, and per-skill
-overrides. Applies to **bundled** skills and `~/.clawdis/skills` (workspace skills
+overrides. Applies to **bundled** skills and `~/.hassoon/skills` (workspace skills
 still win on name conflicts).
 
 Fields:
@@ -500,16 +500,16 @@ Example:
 }
 ```
 
-### `browser` (clawd-managed Chrome)
+### `browser` (hassoon-managed Chrome)
 
-Clawdis can start a **dedicated, isolated** Chrome/Chromium instance for clawd and expose a small loopback control server.
+Hassoon can start a **dedicated, isolated** Chrome/Chromium instance for hassoon and expose a small loopback control server.
 
 Defaults:
 - enabled: `true`
 - control URL: `http://127.0.0.1:18791` (CDP uses `18792`)
 - CDP URL: `http://127.0.0.1:18792` (control URL + 1)
 - profile color: `#FF4500` (lobster-orange)
-- Note: the control server is started by the running gateway (Clawdis.app menubar, or `clawdis gateway`).
+- Note: the control server is started by the running gateway (Hassoon.app menubar, or `hassoon gateway`).
 
 ```json5
 {
@@ -562,13 +562,13 @@ Defaults:
 ```
 
 Notes:
-- `clawdis gateway` refuses to start unless `gateway.mode` is set to `local` (or you pass the override flag).
+- `hassoon gateway` refuses to start unless `gateway.mode` is set to `local` (or you pass the override flag).
 
 Auth and Tailscale:
 - `gateway.auth.mode` sets the handshake requirements (`token` or `password`).
 - `gateway.auth.token` stores the shared token for token auth (used by the CLI on the same machine).
 - When `gateway.auth.mode` is set, only that method is accepted (plus optional Tailscale headers).
-- `gateway.auth.password` can be set here, or via `CLAWDIS_GATEWAY_PASSWORD` (recommended).
+- `gateway.auth.password` can be set here, or via `HASSOON_GATEWAY_PASSWORD` (recommended).
 - `gateway.auth.allowTailscale` controls whether Tailscale identity headers can satisfy auth.
 - `gateway.tailscale.mode: "serve"` uses Tailscale Serve (tailnet only, loopback bind).
 - `gateway.tailscale.mode: "funnel"` exposes the dashboard publicly; requires auth.
@@ -608,7 +608,7 @@ Defaults:
     token: "shared-secret",
     path: "/hooks",
     presets: ["gmail"],
-    transformsDir: "~/.clawdis/hooks",
+    transformsDir: "~/.hassoon/hooks",
     mappings: [
       {
         match: { path: "gmail" },
@@ -626,7 +626,7 @@ Defaults:
 
 Requests must include the hook token:
 - `Authorization: Bearer <token>` **or**
-- `x-clawdis-token: <token>` **or**
+- `x-hassoon-token: <token>` **or**
 - `?token=<token>`
 
 Endpoints:
@@ -642,13 +642,13 @@ Mapping notes:
 - Templates like `{{messages[0].subject}}` read from the payload.
 - `transform` can point to a JS/TS module that returns a hook action.
 
-Gmail helper config (used by `clawdis hooks gmail setup` / `run`):
+Gmail helper config (used by `hassoon hooks gmail setup` / `run`):
 
 ```json5
 {
   hooks: {
     gmail: {
-      account: "clawdbot@gmail.com",
+      account: "hassoonbot@gmail.com",
       topic: "projects/<project-id>/topics/gog-gmail-watch",
       subscription: "gog-gmail-watch-push",
       pushToken: "shared-push-token",
@@ -663,29 +663,29 @@ Gmail helper config (used by `clawdis hooks gmail setup` / `run`):
 }
 ```
 
-Note: when `tailscale.mode` is on, Clawdis defaults `serve.path` to `/` so
+Note: when `tailscale.mode` is on, Hassoon defaults `serve.path` to `/` so
 Tailscale can proxy `/gmail-pubsub` correctly (it strips the set-path prefix).
 
 ### `canvasHost` (LAN/tailnet Canvas file server + live reload)
 
 The Gateway serves a directory of HTML/CSS/JS over HTTP so iOS/Android nodes can simply `canvas.navigate` to it.
 
-Default root: `~/clawd/canvas`  
-Default port: `18793` (chosen to avoid the clawd browser CDP port `18792`)  
+Default root: `~/hassoon/canvas`  
+Default port: `18793` (chosen to avoid the hassoon browser CDP port `18792`)  
 The server listens on the **bridge bind host** (LAN or Tailnet) so nodes can reach it.
 
 The server:
 - serves files under `canvasHost.root`
 - injects a tiny live-reload client into served HTML
-- watches the directory and broadcasts reloads over a WebSocket endpoint at `/__clawdis/ws`
+- watches the directory and broadcasts reloads over a WebSocket endpoint at `/__hassoon/ws`
 - auto-creates a starter `index.html` when the directory is empty (so you see something immediately)
-- also serves A2UI at `/__clawdis__/a2ui/` and is advertised to nodes as `canvasHostUrl`
+- also serves A2UI at `/__hassoon__/a2ui/` and is advertised to nodes as `canvasHostUrl`
   (always used by nodes for Canvas/A2UI)
 
 ```json5
 {
   canvasHost: {
-    root: "~/clawd/canvas",
+    root: "~/hassoon/canvas",
     port: 18793
   }
 }
@@ -693,7 +693,7 @@ The server:
 
 Disable with:
 - config: `canvasHost: { enabled: false }`
-- env: `CLAWDIS_SKIP_CANVAS_HOST=1`
+- env: `HASSOON_SKIP_CANVAS_HOST=1`
 
 ### `bridge` (node bridge server)
 
@@ -722,16 +722,16 @@ Bind modes:
 
 ### `discovery.wideArea` (Wide-Area Bonjour / unicast DNS‑SD)
 
-When enabled, the Gateway writes a unicast DNS-SD zone for `_clawdis-bridge._tcp` under `~/.clawdis/dns/` using the standard discovery domain `clawdis.internal.`
+When enabled, the Gateway writes a unicast DNS-SD zone for `_hassoon-bridge._tcp` under `~/.hassoon/dns/` using the standard discovery domain `hassoon.internal.`
 
 To make iOS/Android discover across networks (Vienna ⇄ London), pair this with:
-- a DNS server on the gateway host serving `clawdis.internal.` (CoreDNS is recommended)
-- Tailscale **split DNS** so clients resolve `clawdis.internal` via that server
+- a DNS server on the gateway host serving `hassoon.internal.` (CoreDNS is recommended)
+- Tailscale **split DNS** so clients resolve `hassoon.internal` via that server
 
 One-time setup helper (gateway host):
 
 ```bash
-clawdis dns setup --apply
+hassoon dns setup --apply
 ```
 
 ```json5

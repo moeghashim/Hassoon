@@ -919,7 +919,7 @@ export async function monitorWebProvider(
       let messagePrefix = cfg.messages?.messagePrefix;
       if (messagePrefix === undefined) {
         const hasAllowFrom = (cfg.whatsapp?.allowFrom?.length ?? 0) > 0;
-        messagePrefix = hasAllowFrom ? "" : "[clawdis]";
+        messagePrefix = hasAllowFrom ? "" : "[hassoon]";
       }
       const prefixStr = messagePrefix ? `${messagePrefix} ` : "";
       const senderLabel =
@@ -1479,7 +1479,7 @@ export async function monitorWebProvider(
 
     if (loggedOut) {
       runtime.error(
-        "WhatsApp session logged out. Run `clawdis login --provider web` to relink.",
+        "WhatsApp session logged out. Run `hassoon login --provider web` to relink.",
       );
       await closeListener();
       break;

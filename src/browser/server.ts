@@ -48,7 +48,7 @@ export async function startBrowserControlServerFromConfig(): Promise<BrowserServ
     s.once("error", reject);
   }).catch((err) => {
     logServer.error(
-      `clawd browser server failed to bind 127.0.0.1:${port}: ${String(err)}`,
+      `hassoon browser server failed to bind 127.0.0.1:${port}: ${String(err)}`,
     );
     return null;
   });
@@ -81,7 +81,7 @@ export async function stopBrowserControlServer(): Promise<void> {
   try {
     await ctx.stopRunningBrowser();
   } catch (err) {
-    logServer.warn(`clawd browser stop failed: ${String(err)}`);
+    logServer.warn(`hassoon browser stop failed: ${String(err)}`);
   }
 
   await new Promise<void>((resolve) => {

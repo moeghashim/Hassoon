@@ -8,13 +8,13 @@ import { z } from "zod";
 import { parseDurationMs } from "../cli/parse-duration.js";
 
 /**
- * Nix mode detection: When CLAWDIS_NIX_MODE=1, the gateway is running under Nix.
+ * Nix mode detection: When HASSOON_NIX_MODE=1, the gateway is running under Nix.
  * In this mode:
  * - No auto-install flows should be attempted
  * - Missing dependencies should produce actionable Nix-specific error messages
  * - Config is managed externally (read-only from Nix perspective)
  */
-export const isNixMode = process.env.CLAWDIS_NIX_MODE === "1";
+export const isNixMode = process.env.HASSOON_NIX_MODE === "1";
 
 export type ReplyMode = "text" | "command";
 export type SessionScope = "per-sender" | "global";
@@ -65,11 +65,11 @@ export type WhatsAppConfig = {
 
 export type BrowserConfig = {
   enabled?: boolean;
-  /** Base URL of the clawd browser control server. Default: http://127.0.0.1:18791 */
+  /** Base URL of the hassoon browser control server. Default: http://127.0.0.1:18791 */
   controlUrl?: string;
   /** Base URL of the CDP endpoint. Default: controlUrl with port + 1. */
   cdpUrl?: string;
-  /** Accent color for the clawd browser profile (hex). Default: #FF4500 */
+  /** Accent color for the hassoon browser profile (hex). Default: #FF4500 */
   color?: string;
   /** Override the browser executable path (macOS/Linux). */
   executablePath?: string;
@@ -195,7 +195,7 @@ export type DiscordGuildEntry = {
 export type DiscordSlashCommandConfig = {
   /** Enable handling for the configured slash command (default: false). */
   enabled?: boolean;
-  /** Slash command name (default: "clawd"). */
+  /** Slash command name (default: "hassoon"). */
   name?: string;
   /** Session key prefix for slash commands (default: "discord:slash"). */
   sessionPrefix?: string;
@@ -290,7 +290,7 @@ export type RoutingConfig = {
 };
 
 export type MessagesConfig = {
-  messagePrefix?: string; // Prefix added to all inbound messages (default: "[clawdis]" if no allowFrom, else "")
+  messagePrefix?: string; // Prefix added to all inbound messages (default: "[hassoon]" if no allowFrom, else "")
   responsePrefix?: string; // Prefix auto-added to all outbound replies (e.g., "🦞")
   timestampPrefix?: boolean | string; // true/false or IANA timezone string (default: true with UTC)
 };
@@ -320,7 +320,7 @@ export type DiscoveryConfig = {
 
 export type CanvasHostConfig = {
   enabled?: boolean;
-  /** Directory to serve (default: ~/clawd/canvas). */
+  /** Directory to serve (default: ~/hassoon/canvas). */
   root?: string;
   /** HTTP port to listen on (default: 18793). */
   port?: number;
@@ -467,7 +467,7 @@ export type ModelsConfig = {
   providers?: Record<string, ModelProviderConfig>;
 };
 
-export type ClawdisConfig = {
+export type HassoonConfig = {
   identity?: {
     name?: string;
     theme?: string;
@@ -483,7 +483,7 @@ export type ClawdisConfig = {
   logging?: LoggingConfig;
   browser?: BrowserConfig;
   ui?: {
-    /** Accent color for Clawdis UI chrome (hex). */
+    /** Accent color for Hassoon UI chrome (hex). */
     seamColor?: string;
   };
   skills?: SkillsConfig;
@@ -559,20 +559,20 @@ export type ClawdisConfig = {
 
 /**
  * State directory for mutable data (sessions, logs, caches).
- * Can be overridden via CLAWDIS_STATE_DIR environment variable.
- * Default: ~/.clawdis
+ * Can be overridden via HASSOON_STATE_DIR environment variable.
+ * Default: ~/.hassoon
  */
-export const STATE_DIR_CLAWDIS =
-  process.env.CLAWDIS_STATE_DIR ?? path.join(os.homedir(), ".clawdis");
+export const STATE_DIR_HASSOON =
+  process.env.HASSOON_STATE_DIR ?? path.join(os.homedir(), ".hassoon");
 
 /**
  * Config file path (JSON5).
- * Can be overridden via CLAWDIS_CONFIG_PATH environment variable.
- * Default: ~/.clawdis/clawdis.json (or $CLAWDIS_STATE_DIR/clawdis.json)
+ * Can be overridden via HASSOON_CONFIG_PATH environment variable.
+ * Default: ~/.hassoon/hassoon.json (or $HASSOON_STATE_DIR/hassoon.json)
  */
-export const CONFIG_PATH_CLAWDIS =
-  process.env.CLAWDIS_CONFIG_PATH ??
-  path.join(STATE_DIR_CLAWDIS, "clawdis.json");
+export const CONFIG_PATH_HASSOON =
+  process.env.HASSOON_CONFIG_PATH ??
+  path.join(STATE_DIR_HASSOON, "hassoon.json");
 
 const ModelApiSchema = z.union([
   z.literal("openai-completions"),
@@ -792,7 +792,7 @@ const HooksGmailSchema = z
   })
   .optional();
 
-const ClawdisSchema = z.object({
+const HassoonSchema = z.object({
   identity: z
     .object({
       name: z.string().optional(),
@@ -1174,7 +1174,7 @@ export type ConfigFileSnapshot = {
   raw: string | null;
   parsed: unknown;
   valid: boolean;
-  config: ClawdisConfig;
+  config: HassoonConfig;
   issues: ConfigValidationIssue[];
   legacyIssues: LegacyConfigIssue[];
 };
@@ -1194,7 +1194,7 @@ const LEGACY_CONFIG_RULES: LegacyConfigRule[] = [
   {
     path: ["routing", "allowFrom"],
     message:
-      "routing.allowFrom was removed; use whatsapp.allowFrom instead (run `clawdis doctor` to migrate).",
+      "routing.allowFrom was removed; use whatsapp.allowFrom instead (run `hassoon doctor` to migrate).",
   },
 ];
 
@@ -1250,7 +1250,7 @@ function findLegacyConfigIssues(raw: unknown): LegacyConfigIssue[] {
 }
 
 export function migrateLegacyConfig(raw: unknown): {
-  config: ClawdisConfig | null;
+  config: HassoonConfig | null;
   changes: string[];
 } {
   if (!raw || typeof raw !== "object") return { config: null, changes: [] };
@@ -1274,7 +1274,7 @@ function escapeRegExp(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function applyIdentityDefaults(cfg: ClawdisConfig): ClawdisConfig {
+function applyIdentityDefaults(cfg: HassoonConfig): HassoonConfig {
   const identity = cfg.identity;
   if (!identity) return cfg;
 
@@ -1284,7 +1284,7 @@ function applyIdentityDefaults(cfg: ClawdisConfig): ClawdisConfig {
   const groupChat = routing.groupChat ?? {};
 
   let mutated = false;
-  const next: ClawdisConfig = { ...cfg };
+  const next: HassoonConfig = { ...cfg };
 
   if (name && !groupChat.mentionPatterns) {
     const parts = name.split(/\s+/).filter(Boolean).map(escapeRegExp);
@@ -1300,15 +1300,15 @@ function applyIdentityDefaults(cfg: ClawdisConfig): ClawdisConfig {
   return mutated ? next : cfg;
 }
 
-export function loadConfig(): ClawdisConfig {
+export function loadConfig(): HassoonConfig {
   // Read config file (JSON5) if present.
-  const configPath = CONFIG_PATH_CLAWDIS;
+  const configPath = CONFIG_PATH_HASSOON;
   try {
     if (!fs.existsSync(configPath)) return {};
     const raw = fs.readFileSync(configPath, "utf-8");
     const parsed = JSON5.parse(raw);
     if (typeof parsed !== "object" || parsed === null) return {};
-    const validated = ClawdisSchema.safeParse(parsed);
+    const validated = HassoonSchema.safeParse(parsed);
     if (!validated.success) {
       console.error("Invalid config:");
       for (const iss of validated.error.issues) {
@@ -1316,7 +1316,7 @@ export function loadConfig(): ClawdisConfig {
       }
       return {};
     }
-    return applyIdentityDefaults(validated.data as ClawdisConfig);
+    return applyIdentityDefaults(validated.data as HassoonConfig);
   } catch (err) {
     console.error(`Failed to read config at ${configPath}`, err);
     return {};
@@ -1326,7 +1326,7 @@ export function loadConfig(): ClawdisConfig {
 export function validateConfigObject(
   raw: unknown,
 ):
-  | { ok: true; config: ClawdisConfig }
+  | { ok: true; config: HassoonConfig }
   | { ok: false; issues: ConfigValidationIssue[] } {
   const legacyIssues = findLegacyConfigIssues(raw);
   if (legacyIssues.length > 0) {
@@ -1338,7 +1338,7 @@ export function validateConfigObject(
       })),
     };
   }
-  const validated = ClawdisSchema.safeParse(raw);
+  const validated = HassoonSchema.safeParse(raw);
   if (!validated.success) {
     return {
       ok: false,
@@ -1350,7 +1350,7 @@ export function validateConfigObject(
   }
   return {
     ok: true,
-    config: applyIdentityDefaults(validated.data as ClawdisConfig),
+    config: applyIdentityDefaults(validated.data as HassoonConfig),
   };
 }
 
@@ -1391,7 +1391,7 @@ function resolveTalkApiKey(): string | null {
   return readTalkApiKeyFromProfile();
 }
 
-function applyTalkApiKey(config: ClawdisConfig): ClawdisConfig {
+function applyTalkApiKey(config: HassoonConfig): HassoonConfig {
   const resolved = resolveTalkApiKey();
   if (!resolved) return config;
   const existing = config.talk?.apiKey?.trim();
@@ -1406,7 +1406,7 @@ function applyTalkApiKey(config: ClawdisConfig): ClawdisConfig {
 }
 
 export async function readConfigFileSnapshot(): Promise<ConfigFileSnapshot> {
-  const configPath = CONFIG_PATH_CLAWDIS;
+  const configPath = CONFIG_PATH_HASSOON;
   const exists = fs.existsSync(configPath);
   if (!exists) {
     const config = applyTalkApiKey({});
@@ -1481,10 +1481,10 @@ export async function readConfigFileSnapshot(): Promise<ConfigFileSnapshot> {
   }
 }
 
-export async function writeConfigFile(cfg: ClawdisConfig) {
-  await fs.promises.mkdir(path.dirname(CONFIG_PATH_CLAWDIS), {
+export async function writeConfigFile(cfg: HassoonConfig) {
+  await fs.promises.mkdir(path.dirname(CONFIG_PATH_HASSOON), {
     recursive: true,
   });
   const json = JSON.stringify(cfg, null, 2).trimEnd().concat("\n");
-  await fs.promises.writeFile(CONFIG_PATH_CLAWDIS, json, "utf-8");
+  await fs.promises.writeFile(CONFIG_PATH_HASSOON, json, "utf-8");
 }

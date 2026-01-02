@@ -10,8 +10,8 @@ import { CONFIG_DIR } from "../utils.js";
 import { normalizeCdpWsUrl } from "./cdp.js";
 import type { ResolvedBrowserConfig } from "./config.js";
 import {
-  DEFAULT_CLAWD_BROWSER_COLOR,
-  DEFAULT_CLAWD_BROWSER_PROFILE_NAME,
+  DEFAULT_HASSOON_BROWSER_COLOR,
+  DEFAULT_HASSOON_BROWSER_PROFILE_NAME,
 } from "./constants.js";
 
 const log = createSubsystemLogger("browser").child("chrome");
@@ -116,17 +116,17 @@ function resolveBrowserExecutable(
   return null;
 }
 
-export function resolveClawdUserDataDir() {
+export function resolveHassoonUserDataDir() {
   return path.join(
     CONFIG_DIR,
     "browser",
-    DEFAULT_CLAWD_BROWSER_PROFILE_NAME,
+    DEFAULT_HASSOON_BROWSER_PROFILE_NAME,
     "user-data",
   );
 }
 
 function decoratedMarkerPath(userDataDir: string) {
-  return path.join(userDataDir, ".clawd-profile-decorated");
+  return path.join(userDataDir, ".hassoon-profile-decorated");
 }
 
 function safeReadJson(filePath: string): Record<string, unknown> | null {
@@ -253,13 +253,13 @@ function isProfileDecorated(
  * Best-effort profile decoration (name + lobster-orange). Chrome preference keys
  * vary by version; we keep this conservative and idempotent.
  */
-export function decorateClawdProfile(
+export function decorateHassoonProfile(
   userDataDir: string,
   opts?: { color?: string },
 ) {
-  const desiredName = DEFAULT_CLAWD_BROWSER_PROFILE_NAME;
+  const desiredName = DEFAULT_HASSOON_BROWSER_PROFILE_NAME;
   const desiredColor = (
-    opts?.color ?? DEFAULT_CLAWD_BROWSER_COLOR
+    opts?.color ?? DEFAULT_HASSOON_BROWSER_COLOR
   ).toUpperCase();
   const desiredColorInt = parseHexRgbToSignedArgbInt(desiredColor);
 
@@ -431,7 +431,7 @@ export async function isChromeCdpReady(
   return await canOpenWebSocket(wsUrl, handshakeTimeoutMs);
 }
 
-export async function launchClawdChrome(
+export async function launchHassoonChrome(
   resolved: ResolvedBrowserConfig,
 ): Promise<RunningChrome> {
   await ensurePortAvailable(resolved.cdpPort);
@@ -443,13 +443,13 @@ export async function launchClawdChrome(
     );
   }
 
-  const userDataDir = resolveClawdUserDataDir();
+  const userDataDir = resolveHassoonUserDataDir();
   fs.mkdirSync(userDataDir, { recursive: true });
 
   const needsDecorate = !isProfileDecorated(
     userDataDir,
-    DEFAULT_CLAWD_BROWSER_PROFILE_NAME,
-    (resolved.color ?? DEFAULT_CLAWD_BROWSER_COLOR).toUpperCase(),
+    DEFAULT_HASSOON_BROWSER_PROFILE_NAME,
+    (resolved.color ?? DEFAULT_HASSOON_BROWSER_COLOR).toUpperCase(),
   );
 
   // First launch to create preference files if missing, then decorate and relaunch.
@@ -521,10 +521,10 @@ export async function launchClawdChrome(
 
   if (needsDecorate) {
     try {
-      decorateClawdProfile(userDataDir, { color: resolved.color });
-      log.info(`🦞 clawd browser profile decorated (${resolved.color})`);
+      decorateHassoonProfile(userDataDir, { color: resolved.color });
+      log.info(`🦞 hassoon browser profile decorated (${resolved.color})`);
     } catch (err) {
-      log.warn(`clawd browser profile decoration failed: ${String(err)}`);
+      log.warn(`hassoon browser profile decoration failed: ${String(err)}`);
     }
   }
 
@@ -547,7 +547,7 @@ export async function launchClawdChrome(
 
   const pid = proc.pid ?? -1;
   log.info(
-    `🦞 clawd browser started (${exe.kind}) on 127.0.0.1:${resolved.cdpPort} (pid ${pid})`,
+    `🦞 hassoon browser started (${exe.kind}) on 127.0.0.1:${resolved.cdpPort} (pid ${pid})`,
   );
 
   return {
@@ -560,7 +560,7 @@ export async function launchClawdChrome(
   };
 }
 
-export async function stopClawdChrome(
+export async function stopHassoonChrome(
   running: RunningChrome,
   timeoutMs = 2500,
 ) {

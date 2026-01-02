@@ -5,7 +5,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise<T> {
-  const base = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-config-"));
+  const base = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-config-"));
   const previousHome = process.env.HOME;
   process.env.HOME = base;
   try {
@@ -60,10 +60,10 @@ describe("config identity defaults", () => {
 
   it("derives mentionPatterns when identity is set", async () => {
     await withTempHome(async (home) => {
-      const configDir = path.join(home, ".clawdis");
+      const configDir = path.join(home, ".hassoon");
       await fs.mkdir(configDir, { recursive: true });
       await fs.writeFile(
-        path.join(configDir, "clawdis.json"),
+        path.join(configDir, "hassoon.json"),
         JSON.stringify(
           {
             identity: { name: "Samantha", theme: "helpful sloth", emoji: "🦥" },
@@ -89,10 +89,10 @@ describe("config identity defaults", () => {
 
   it("does not override explicit values", async () => {
     await withTempHome(async (home) => {
-      const configDir = path.join(home, ".clawdis");
+      const configDir = path.join(home, ".hassoon");
       await fs.mkdir(configDir, { recursive: true });
       await fs.writeFile(
-        path.join(configDir, "clawdis.json"),
+        path.join(configDir, "hassoon.json"),
         JSON.stringify(
           {
             identity: {
@@ -104,7 +104,7 @@ describe("config identity defaults", () => {
               responsePrefix: "✅",
             },
             routing: {
-              groupChat: { mentionPatterns: ["@clawd"] },
+              groupChat: { mentionPatterns: ["@hassoon"] },
             },
           },
           null,
@@ -118,16 +118,16 @@ describe("config identity defaults", () => {
       const cfg = loadConfig();
 
       expect(cfg.messages?.responsePrefix).toBe("✅");
-      expect(cfg.routing?.groupChat?.mentionPatterns).toEqual(["@clawd"]);
+      expect(cfg.routing?.groupChat?.mentionPatterns).toEqual(["@hassoon"]);
     });
   });
 
   it("respects empty responsePrefix to disable identity defaults", async () => {
     await withTempHome(async (home) => {
-      const configDir = path.join(home, ".clawdis");
+      const configDir = path.join(home, ".hassoon");
       await fs.mkdir(configDir, { recursive: true });
       await fs.writeFile(
-        path.join(configDir, "clawdis.json"),
+        path.join(configDir, "hassoon.json"),
         JSON.stringify(
           {
             identity: { name: "Samantha", theme: "helpful sloth", emoji: "🦥" },
@@ -150,10 +150,10 @@ describe("config identity defaults", () => {
 
   it("does not synthesize agent/session when absent", async () => {
     await withTempHome(async (home) => {
-      const configDir = path.join(home, ".clawdis");
+      const configDir = path.join(home, ".hassoon");
       await fs.mkdir(configDir, { recursive: true });
       await fs.writeFile(
-        path.join(configDir, "clawdis.json"),
+        path.join(configDir, "hassoon.json"),
         JSON.stringify(
           {
             identity: { name: "Samantha", theme: "helpful sloth", emoji: "🦥" },
@@ -181,13 +181,13 @@ describe("config identity defaults", () => {
 
   it("does not derive responsePrefix from identity emoji", async () => {
     await withTempHome(async (home) => {
-      const configDir = path.join(home, ".clawdis");
+      const configDir = path.join(home, ".hassoon");
       await fs.mkdir(configDir, { recursive: true });
       await fs.writeFile(
-        path.join(configDir, "clawdis.json"),
+        path.join(configDir, "hassoon.json"),
         JSON.stringify(
           {
-            identity: { name: "Clawd", theme: "space lobster", emoji: "🦞" },
+            identity: { name: "Hassoon", theme: "space lobster", emoji: "🦞" },
             messages: {},
             routing: {},
           },
@@ -219,10 +219,10 @@ describe("config discord", () => {
 
   it("loads discord guild map + dm group settings", async () => {
     await withTempHome(async (home) => {
-      const configDir = path.join(home, ".clawdis");
+      const configDir = path.join(home, ".hassoon");
       await fs.mkdir(configDir, { recursive: true });
       await fs.writeFile(
-        path.join(configDir, "clawdis.json"),
+        path.join(configDir, "hassoon.json"),
         JSON.stringify(
           {
             discord: {
@@ -231,11 +231,11 @@ describe("config discord", () => {
                 enabled: true,
                 allowFrom: ["steipete"],
                 groupEnabled: true,
-                groupChannels: ["clawd-dm"],
+                groupChannels: ["hassoon-dm"],
               },
               guilds: {
                 "123": {
-                  slug: "friends-of-clawd",
+                  slug: "friends-of-hassoon",
                   requireMention: false,
                   users: ["steipete"],
                   channels: {
@@ -257,8 +257,8 @@ describe("config discord", () => {
 
       expect(cfg.discord?.enabled).toBe(true);
       expect(cfg.discord?.dm?.groupEnabled).toBe(true);
-      expect(cfg.discord?.dm?.groupChannels).toEqual(["clawd-dm"]);
-      expect(cfg.discord?.guilds?.["123"]?.slug).toBe("friends-of-clawd");
+      expect(cfg.discord?.dm?.groupChannels).toEqual(["hassoon-dm"]);
+      expect(cfg.discord?.guilds?.["123"]?.slug).toBe("friends-of-hassoon");
       expect(cfg.discord?.guilds?.["123"]?.channels?.general?.allow).toBe(true);
     });
   });
@@ -266,29 +266,29 @@ describe("config discord", () => {
 
 describe("Nix integration (U3, U5, U9)", () => {
   describe("U3: isNixMode env var detection", () => {
-    it("isNixMode is false when CLAWDIS_NIX_MODE is not set", async () => {
-      await withEnvOverride({ CLAWDIS_NIX_MODE: undefined }, async () => {
+    it("isNixMode is false when HASSOON_NIX_MODE is not set", async () => {
+      await withEnvOverride({ HASSOON_NIX_MODE: undefined }, async () => {
         const { isNixMode } = await import("./config.js");
         expect(isNixMode).toBe(false);
       });
     });
 
-    it("isNixMode is false when CLAWDIS_NIX_MODE is empty", async () => {
-      await withEnvOverride({ CLAWDIS_NIX_MODE: "" }, async () => {
+    it("isNixMode is false when HASSOON_NIX_MODE is empty", async () => {
+      await withEnvOverride({ HASSOON_NIX_MODE: "" }, async () => {
         const { isNixMode } = await import("./config.js");
         expect(isNixMode).toBe(false);
       });
     });
 
-    it("isNixMode is false when CLAWDIS_NIX_MODE is not '1'", async () => {
-      await withEnvOverride({ CLAWDIS_NIX_MODE: "true" }, async () => {
+    it("isNixMode is false when HASSOON_NIX_MODE is not '1'", async () => {
+      await withEnvOverride({ HASSOON_NIX_MODE: "true" }, async () => {
         const { isNixMode } = await import("./config.js");
         expect(isNixMode).toBe(false);
       });
     });
 
-    it("isNixMode is true when CLAWDIS_NIX_MODE=1", async () => {
-      await withEnvOverride({ CLAWDIS_NIX_MODE: "1" }, async () => {
+    it("isNixMode is true when HASSOON_NIX_MODE=1", async () => {
+      await withEnvOverride({ HASSOON_NIX_MODE: "1" }, async () => {
         const { isNixMode } = await import("./config.js");
         expect(isNixMode).toBe(true);
       });
@@ -296,52 +296,52 @@ describe("Nix integration (U3, U5, U9)", () => {
   });
 
   describe("U5: CONFIG_PATH and STATE_DIR env var overrides", () => {
-    it("STATE_DIR_CLAWDIS defaults to ~/.clawdis when env not set", async () => {
-      await withEnvOverride({ CLAWDIS_STATE_DIR: undefined }, async () => {
-        const { STATE_DIR_CLAWDIS } = await import("./config.js");
-        expect(STATE_DIR_CLAWDIS).toMatch(/\.clawdis$/);
+    it("STATE_DIR_HASSOON defaults to ~/.hassoon when env not set", async () => {
+      await withEnvOverride({ HASSOON_STATE_DIR: undefined }, async () => {
+        const { STATE_DIR_HASSOON } = await import("./config.js");
+        expect(STATE_DIR_HASSOON).toMatch(/\.hassoon$/);
       });
     });
 
-    it("STATE_DIR_CLAWDIS respects CLAWDIS_STATE_DIR override", async () => {
+    it("STATE_DIR_HASSOON respects HASSOON_STATE_DIR override", async () => {
       await withEnvOverride(
-        { CLAWDIS_STATE_DIR: "/custom/state/dir" },
+        { HASSOON_STATE_DIR: "/custom/state/dir" },
         async () => {
-          const { STATE_DIR_CLAWDIS } = await import("./config.js");
-          expect(STATE_DIR_CLAWDIS).toBe("/custom/state/dir");
+          const { STATE_DIR_HASSOON } = await import("./config.js");
+          expect(STATE_DIR_HASSOON).toBe("/custom/state/dir");
         },
       );
     });
 
-    it("CONFIG_PATH_CLAWDIS defaults to ~/.clawdis/clawdis.json when env not set", async () => {
+    it("CONFIG_PATH_HASSOON defaults to ~/.hassoon/hassoon.json when env not set", async () => {
       await withEnvOverride(
-        { CLAWDIS_CONFIG_PATH: undefined, CLAWDIS_STATE_DIR: undefined },
+        { HASSOON_CONFIG_PATH: undefined, HASSOON_STATE_DIR: undefined },
         async () => {
-          const { CONFIG_PATH_CLAWDIS } = await import("./config.js");
-          expect(CONFIG_PATH_CLAWDIS).toMatch(/\.clawdis\/clawdis\.json$/);
+          const { CONFIG_PATH_HASSOON } = await import("./config.js");
+          expect(CONFIG_PATH_HASSOON).toMatch(/\.hassoon\/hassoon\.json$/);
         },
       );
     });
 
-    it("CONFIG_PATH_CLAWDIS respects CLAWDIS_CONFIG_PATH override", async () => {
+    it("CONFIG_PATH_HASSOON respects HASSOON_CONFIG_PATH override", async () => {
       await withEnvOverride(
-        { CLAWDIS_CONFIG_PATH: "/nix/store/abc/clawdis.json" },
+        { HASSOON_CONFIG_PATH: "/nix/store/abc/hassoon.json" },
         async () => {
-          const { CONFIG_PATH_CLAWDIS } = await import("./config.js");
-          expect(CONFIG_PATH_CLAWDIS).toBe("/nix/store/abc/clawdis.json");
+          const { CONFIG_PATH_HASSOON } = await import("./config.js");
+          expect(CONFIG_PATH_HASSOON).toBe("/nix/store/abc/hassoon.json");
         },
       );
     });
 
-    it("CONFIG_PATH_CLAWDIS uses STATE_DIR_CLAWDIS when only state dir is overridden", async () => {
+    it("CONFIG_PATH_HASSOON uses STATE_DIR_HASSOON when only state dir is overridden", async () => {
       await withEnvOverride(
         {
-          CLAWDIS_CONFIG_PATH: undefined,
-          CLAWDIS_STATE_DIR: "/custom/state",
+          HASSOON_CONFIG_PATH: undefined,
+          HASSOON_STATE_DIR: "/custom/state",
         },
         async () => {
-          const { CONFIG_PATH_CLAWDIS } = await import("./config.js");
-          expect(CONFIG_PATH_CLAWDIS).toBe("/custom/state/clawdis.json");
+          const { CONFIG_PATH_HASSOON } = await import("./config.js");
+          expect(CONFIG_PATH_HASSOON).toBe("/custom/state/hassoon.json");
         },
       );
     });
@@ -350,10 +350,10 @@ describe("Nix integration (U3, U5, U9)", () => {
   describe("U9: telegram.tokenFile schema validation", () => {
     it("accepts config with only botToken", async () => {
       await withTempHome(async (home) => {
-        const configDir = path.join(home, ".clawdis");
+        const configDir = path.join(home, ".hassoon");
         await fs.mkdir(configDir, { recursive: true });
         await fs.writeFile(
-          path.join(configDir, "clawdis.json"),
+          path.join(configDir, "hassoon.json"),
           JSON.stringify({
             telegram: { botToken: "123:ABC" },
           }),
@@ -370,10 +370,10 @@ describe("Nix integration (U3, U5, U9)", () => {
 
     it("accepts config with only tokenFile", async () => {
       await withTempHome(async (home) => {
-        const configDir = path.join(home, ".clawdis");
+        const configDir = path.join(home, ".hassoon");
         await fs.mkdir(configDir, { recursive: true });
         await fs.writeFile(
-          path.join(configDir, "clawdis.json"),
+          path.join(configDir, "hassoon.json"),
           JSON.stringify({
             telegram: { tokenFile: "/run/agenix/telegram-token" },
           }),
@@ -390,10 +390,10 @@ describe("Nix integration (U3, U5, U9)", () => {
 
     it("accepts config with both botToken and tokenFile", async () => {
       await withTempHome(async (home) => {
-        const configDir = path.join(home, ".clawdis");
+        const configDir = path.join(home, ".hassoon");
         await fs.mkdir(configDir, { recursive: true });
         await fs.writeFile(
-          path.join(configDir, "clawdis.json"),
+          path.join(configDir, "hassoon.json"),
           JSON.stringify({
             telegram: {
               botToken: "fallback:token",
@@ -467,7 +467,7 @@ describe("talk.voiceAliases", () => {
     const res = validateConfigObject({
       talk: {
         voiceAliases: {
-          Clawd: "EXAVITQu4vr4xnSDxMaL",
+          Hassoon: "EXAVITQu4vr4xnSDxMaL",
           Roger: "CwhRBWXzGAHq8TQ4Fs17",
         },
       },
@@ -481,7 +481,7 @@ describe("talk.voiceAliases", () => {
     const res = validateConfigObject({
       talk: {
         voiceAliases: {
-          Clawd: 123,
+          Hassoon: 123,
         },
       },
     });
@@ -515,7 +515,7 @@ describe("legacy config detection", () => {
 
   it("surfaces legacy issues in snapshot", async () => {
     await withTempHome(async (home) => {
-      const configPath = path.join(home, ".clawdis", "clawdis.json");
+      const configPath = path.join(home, ".hassoon", "hassoon.json");
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await fs.writeFile(
         configPath,

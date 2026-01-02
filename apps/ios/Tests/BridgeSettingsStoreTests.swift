@@ -1,14 +1,14 @@
 import Foundation
 import Testing
-@testable import Clawdis
+@testable import Hassoon
 
 private struct KeychainEntry: Hashable {
     let service: String
     let account: String
 }
 
-private let bridgeService = "com.steipete.clawdis.bridge"
-private let nodeService = "com.steipete.clawdis.node"
+private let bridgeService = "com.moeghashim.hassoon.bridge"
+private let nodeService = "com.moeghashim.hassoon.node"
 private let instanceIdEntry = KeychainEntry(service: nodeService, account: "instanceId")
 private let preferredBridgeEntry = KeychainEntry(service: bridgeService, account: "preferredStableID")
 private let lastBridgeEntry = KeychainEntry(service: bridgeService, account: "lastDiscoveredStableID")

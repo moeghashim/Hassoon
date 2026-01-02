@@ -5,18 +5,18 @@ read_when:
 ---
 # Web Chat (macOS app)
 
-The macOS menu bar app shows the WebChat UI as a native SwiftUI view and reuses the **primary Clawd session** (`main` by default, configurable via `session.mainKey`).
+The macOS menu bar app shows the WebChat UI as a native SwiftUI view and reuses the **primary Hassoon session** (`main` by default, configurable via `session.mainKey`).
 
 - **Local mode**: connects directly to the local Gateway WebSocket.
 - **Remote mode**: forwards the Gateway WebSocket control port over SSH and uses that as the data plane.
 
 ## Launch & debugging
 - Manual: Lobster menu → “Open Chat”.
-- Auto-open for testing: run `dist/Clawdis.app/Contents/MacOS/Clawdis --webchat` (or pass `--webchat` to the binary launched by launchd). The window opens on startup.
-- Logs: see `./scripts/clawlog.sh` (subsystem `com.steipete.clawdis`, category `WebChatSwiftUI`).
+- Auto-open for testing: run `dist/Hassoon.app/Contents/MacOS/Hassoon --webchat` (or pass `--webchat` to the binary launched by launchd). The window opens on startup.
+- Logs: see `./scripts/clawlog.sh` (subsystem `com.moeghashim.hassoon`, category `WebChatSwiftUI`).
 
 ## How it’s wired
-- Implementation: `apps/macos/Sources/Clawdis/WebChatSwiftUI.swift` hosts `ClawdisChatUI` and speaks to the Gateway over `GatewayConnection`.
+- Implementation: `apps/macos/Sources/Hassoon/WebChatSwiftUI.swift` hosts `HassoonChatUI` and speaks to the Gateway over `GatewayConnection`.
 - Data plane: Gateway WebSocket methods `chat.history`, `chat.send`, `chat.abort`; events `chat`, `agent`, `presence`, `tick`, `health`.
 - Session: usually primary (`main`); multiple transports (WhatsApp/Telegram/Discord/Desktop) share the same key. The onboarding flow uses a dedicated `onboarding` session to keep first-run setup separate.
 

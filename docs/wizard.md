@@ -7,20 +7,20 @@ read_when:
 
 # Onboarding Wizard (CLI)
 
-The onboarding wizard is the **recommended** way to set up Clawdis on any OS.
+The onboarding wizard is the **recommended** way to set up Hassoon on any OS.
 It configures a local Gateway or a remote Gateway connection, plus providers, skills,
 and workspace defaults in one guided flow.
 
 Primary entrypoint:
 
 ```bash
-clawdis onboard
+hassoon onboard
 ```
 
 Follow‑up reconfiguration:
 
 ```bash
-clawdis configure
+hassoon configure
 ```
 
 ## What the wizard does
@@ -40,7 +40,7 @@ It does **not** install or change anything on the remote host.
 ## Flow details (local)
 
 1) **Existing config detection**
-   - If `~/.clawdis/clawdis.json` exists, choose **Keep / Modify / Reset**.
+   - If `~/.hassoon/hassoon.json` exists, choose **Keep / Modify / Reset**.
    - Reset uses `trash` (never `rm`) and offers scopes:
      - Config only
      - Config + credentials + sessions
@@ -53,7 +53,7 @@ It does **not** install or change anything on the remote host.
    - **Skip**: no auth configured yet.
 
 3) **Workspace**
-   - Default `~/clawd` (configurable).
+   - Default `~/hassoon` (configurable).
    - Seeds the workspace files needed for the agent bootstrap ritual.
 
 4) **Gateway**
@@ -74,7 +74,7 @@ It does **not** install or change anything on the remote host.
    - Windows: Scheduled Task
 
 7) **Health check**
-   - Starts the Gateway (if needed) and runs `clawdis health`.
+   - Starts the Gateway (if needed) and runs `hassoon health`.
 
 8) **Skills (recommended)**
    - Reads the available skills and checks requirements.
@@ -104,7 +104,7 @@ Notes:
 Use `--non-interactive` to automate or script onboarding:
 
 ```bash
-clawdis onboard --non-interactive \
+hassoon onboard --non-interactive \
   --mode local \
   --auth-choice apiKey \
   --anthropic-api-key "$ANTHROPIC_API_KEY" \
@@ -119,7 +119,7 @@ Add `--json` for a machine‑readable summary.
 
 The wizard can install `signal-cli` from GitHub releases:
 - Downloads the appropriate release asset.
-- Stores it under `~/.clawdis/tools/signal-cli/<version>/`.
+- Stores it under `~/.hassoon/tools/signal-cli/<version>/`.
 - Writes `signal.cliPath` to your config.
 
 Notes:
@@ -129,7 +129,7 @@ Notes:
 
 ## What the wizard writes
 
-Typical fields in `~/.clawdis/clawdis.json`:
+Typical fields in `~/.hassoon/hassoon.json`:
 - `agent.workspace`
 - `agent.model` / `models.providers` (if Minimax chosen)
 - `gateway.*` (mode, bind, auth, tailscale)
@@ -141,8 +141,8 @@ Typical fields in `~/.clawdis/clawdis.json`:
 - `wizard.lastRunCommand`
 - `wizard.lastRunMode`
 
-WhatsApp credentials go to `~/.clawdis/credentials/`.
-Sessions are stored under `~/.clawdis/sessions/`.
+WhatsApp credentials go to `~/.hassoon/credentials/`.
+Sessions are stored under `~/.hassoon/sessions/`.
 
 ## Related docs
 

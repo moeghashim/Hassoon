@@ -15,28 +15,28 @@ function enhanceBrowserFetchError(
   const code = extractErrorCode(cause) ?? extractErrorCode(err) ?? "";
 
   const hint =
-    "Start (or restart) the Clawdis gateway (Clawdis.app menubar, or `clawdis gateway`) and try again.";
+    "Start (or restart) the Hassoon gateway (Hassoon.app menubar, or `hassoon gateway`) and try again.";
 
   if (code === "ECONNREFUSED") {
     return new Error(
-      `Can't reach the clawd browser control server at ${url} (connection refused). ${hint}`,
+      `Can't reach the hassoon browser control server at ${url} (connection refused). ${hint}`,
     );
   }
   if (code === "ETIMEDOUT" || code === "UND_ERR_CONNECT_TIMEOUT") {
     return new Error(
-      `Can't reach the clawd browser control server at ${url} (timed out after ${timeoutMs}ms). ${hint}`,
+      `Can't reach the hassoon browser control server at ${url} (timed out after ${timeoutMs}ms). ${hint}`,
     );
   }
 
   const msg = formatErrorMessage(err);
   if (msg.toLowerCase().includes("abort")) {
     return new Error(
-      `Can't reach the clawd browser control server at ${url} (timed out after ${timeoutMs}ms). ${hint}`,
+      `Can't reach the hassoon browser control server at ${url} (timed out after ${timeoutMs}ms). ${hint}`,
     );
   }
 
   return new Error(
-    `Can't reach the clawd browser control server at ${url}. ${hint} (${msg})`,
+    `Can't reach the hassoon browser control server at ${url}. ${hint} (${msg})`,
   );
 }
 

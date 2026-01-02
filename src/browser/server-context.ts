@@ -8,10 +8,10 @@ import { createTargetViaCdp, normalizeCdpWsUrl } from "./cdp.js";
 import {
   isChromeCdpReady,
   isChromeReachable,
-  launchClawdChrome,
+  launchHassoonChrome,
   type RunningChrome,
-  resolveClawdUserDataDir,
-  stopClawdChrome,
+  resolveHassoonUserDataDir,
+  stopHassoonChrome,
 } from "./chrome.js";
 import type { ResolvedBrowserConfig } from "./config.js";
 import { resolveTargetIdFromTabs } from "./target-id.js";
@@ -223,7 +223,7 @@ export function createBrowserRouteContext(
             : "Browser attachOnly is enabled and no browser is running.",
         );
       }
-      const launched = await launchClawdChrome(current.resolved);
+      const launched = await launchHassoonChrome(current.resolved);
       attachRunning(launched);
     }
 
@@ -239,14 +239,14 @@ export function createBrowserRouteContext(
 
     if (!current.running) {
       throw new Error(
-        "CDP port responds but websocket handshake failed. Ensure the clawd browser owns the port or stop the conflicting process.",
+        "CDP port responds but websocket handshake failed. Ensure the hassoon browser owns the port or stop the conflicting process.",
       );
     }
 
-    await stopClawdChrome(current.running);
+    await stopHassoonChrome(current.running);
     opts.setRunning(null);
 
-    const relaunched = await launchClawdChrome(current.resolved);
+    const relaunched = await launchHassoonChrome(current.resolved);
     attachRunning(relaunched);
 
     if (!(await isReachable(600))) {
@@ -311,7 +311,7 @@ export function createBrowserRouteContext(
   const stopRunningBrowser = async (): Promise<{ stopped: boolean }> => {
     const current = state();
     if (!current.running) return { stopped: false };
-    await stopClawdChrome(current.running);
+    await stopHassoonChrome(current.running);
     opts.setRunning(null);
     return { stopped: true };
   };
@@ -321,12 +321,12 @@ export function createBrowserRouteContext(
     if (!current.resolved.cdpIsLoopback) {
       throw new Error("reset-profile is only supported for local browsers.");
     }
-    const userDataDir = resolveClawdUserDataDir();
+    const userDataDir = resolveHassoonUserDataDir();
 
     const httpReachable = await isHttpReachable(300);
     if (httpReachable && !current.running) {
       throw new Error(
-        "Browser appears to be running but is not owned by clawd. Stop it before resetting the profile.",
+        "Browser appears to be running but is not owned by hassoon. Stop it before resetting the profile.",
       );
     }
 

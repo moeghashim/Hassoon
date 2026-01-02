@@ -6,17 +6,17 @@ plugins {
 }
 
 android {
-  namespace = "com.steipete.clawdis.node"
+  namespace = "com.moeghashim.hassoon.node"
   compileSdk = 36
 
   sourceSets {
     getByName("main") {
-      assets.srcDir(file("../../shared/ClawdisKit/Sources/ClawdisKit/Resources"))
+      assets.srcDir(file("../../shared/HassoonKit/Sources/HassoonKit/Resources"))
     }
   }
 
   defaultConfig {
-    applicationId = "com.steipete.clawdis.node"
+    applicationId = "com.moeghashim.hassoon.node"
     minSdk = 31
     targetSdk = 36
     versionCode = 1

@@ -33,7 +33,7 @@ export function resolveGatewayLogPaths(
   stderrPath: string;
 } {
   const home = resolveHomeDir(env);
-  const logDir = path.join(home, ".clawdis", "logs");
+  const logDir = path.join(home, ".hassoon", "logs");
   return {
     logDir,
     stdoutPath: path.join(logDir, "gateway.log"),

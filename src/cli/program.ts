@@ -33,12 +33,12 @@ export function buildProgram() {
   const TAGLINE =
     "Send, receive, and auto-reply on WhatsApp (web) and Telegram (bot).";
 
-  program.name("clawdis").description("").version(PROGRAM_VERSION);
+  program.name("hassoon").description("").version(PROGRAM_VERSION);
 
   const formatIntroLine = (version: string, rich = true) => {
-    const base = `📡 clawdis ${version} — ${TAGLINE}`;
+    const base = `📡 hassoon ${version} — ${TAGLINE}`;
     return rich && chalk.level > 0
-      ? `${chalk.bold.cyan("📡 clawdis")} ${chalk.white(version)} ${chalk.gray("—")} ${chalk.green(TAGLINE)}`
+      ? `${chalk.bold.cyan("📡 hassoon")} ${chalk.white(version)} ${chalk.gray("—")} ${chalk.green(TAGLINE)}`
       : base;
   };
 
@@ -79,32 +79,32 @@ export function buildProgram() {
       .join("\n");
     defaultRuntime.error(
       danger(
-        `Legacy config entries detected. Run \"clawdis doctor\" (or ask your agent) to migrate.\n${issues}`,
+        `Legacy config entries detected. Run \"hassoon doctor\" (or ask your agent) to migrate.\n${issues}`,
       ),
     );
     process.exit(1);
   });
   const examples = [
     [
-      "clawdis login --verbose",
+      "hassoon login --verbose",
       "Link personal WhatsApp Web and show QR + connection logs.",
     ],
     [
-      'clawdis send --to +15555550123 --message "Hi" --json',
+      'hassoon send --to +15555550123 --message "Hi" --json',
       "Send via your web session and print JSON result.",
     ],
-    ["clawdis gateway --port 18789", "Run the WebSocket Gateway locally."],
+    ["hassoon gateway --port 18789", "Run the WebSocket Gateway locally."],
     [
-      "clawdis gateway --force",
+      "hassoon gateway --force",
       "Kill anything bound to the default gateway port, then start it.",
     ],
-    ["clawdis gateway ...", "Gateway control via WebSocket."],
+    ["hassoon gateway ...", "Gateway control via WebSocket."],
     [
-      'clawdis agent --to +15555550123 --message "Run summary" --deliver',
+      'hassoon agent --to +15555550123 --message "Run summary" --deliver',
       "Talk directly to the agent using the Gateway; optionally send the WhatsApp reply.",
     ],
     [
-      'clawdis send --provider telegram --to @mychat --message "Hi"',
+      'hassoon send --provider telegram --to @mychat --message "Hi"',
       "Send via your Telegram bot.",
     ],
   ] as const;
@@ -120,10 +120,10 @@ export function buildProgram() {
 
   program
     .command("setup")
-    .description("Initialize ~/.clawdis/clawdis.json and the agent workspace")
+    .description("Initialize ~/.hassoon/hassoon.json and the agent workspace")
     .option(
       "--workspace <dir>",
-      "Agent workspace directory (default: ~/clawd; stored as agent.workspace)",
+      "Agent workspace directory (default: ~/hassoon; stored as agent.workspace)",
     )
     .option("--wizard", "Run the interactive onboarding wizard", false)
     .option("--non-interactive", "Run the wizard without prompts", false)
@@ -160,7 +160,7 @@ export function buildProgram() {
     .description(
       "Interactive wizard to set up the gateway, workspace, and skills",
     )
-    .option("--workspace <dir>", "Agent workspace directory (default: ~/clawd)")
+    .option("--workspace <dir>", "Agent workspace directory (default: ~/hassoon)")
     .option("--non-interactive", "Run without prompts", false)
     .option("--mode <mode>", "Wizard mode: local|remote")
     .option("--auth-choice <choice>", "Auth: oauth|apiKey|minimax|skip")
@@ -321,10 +321,10 @@ export function buildProgram() {
       "after",
       `
 Examples:
-  clawdis send --to +15555550123 --message "Hi"
-  clawdis send --to +15555550123 --message "Hi" --media photo.jpg
-  clawdis send --to +15555550123 --message "Hi" --dry-run      # print payload only
-  clawdis send --to +15555550123 --message "Hi" --json         # machine-readable result`,
+  hassoon send --to +15555550123 --message "Hi"
+  hassoon send --to +15555550123 --message "Hi" --media photo.jpg
+  hassoon send --to +15555550123 --message "Hi" --dry-run      # print payload only
+  hassoon send --to +15555550123 --message "Hi" --json         # machine-readable result`,
     )
     .action(async (opts) => {
       setVerbose(Boolean(opts.verbose));
@@ -371,10 +371,10 @@ Examples:
       "after",
       `
 Examples:
-  clawdis agent --to +15555550123 --message "status update"
-  clawdis agent --session-id 1234 --message "Summarize inbox" --thinking medium
-  clawdis agent --to +15555550123 --message "Trace logs" --verbose on --json
-  clawdis agent --to +15555550123 --message "Summon reply" --deliver
+  hassoon agent --to +15555550123 --message "status update"
+  hassoon agent --session-id 1234 --message "Summarize inbox" --thinking medium
+  hassoon agent --to +15555550123 --message "Trace logs" --verbose on --json
+  hassoon agent --to +15555550123 --message "Summon reply" --deliver
 `,
     )
     .action(async (opts) => {
@@ -413,10 +413,10 @@ Examples:
       "after",
       `
 Examples:
-  clawdis status                   # show linked account + session store summary
-  clawdis status --json            # machine-readable output
-  clawdis status --deep            # run provider probes (WA + Telegram + Discord + Signal)
-  clawdis status --deep --timeout 5000 # tighten probe timeout`,
+  hassoon status                   # show linked account + session store summary
+  hassoon status --json            # machine-readable output
+  hassoon status --deep            # run provider probes (WA + Telegram + Discord + Signal)
+  hassoon status --deep --timeout 5000 # tighten probe timeout`,
     )
     .action(async (opts) => {
       setVerbose(Boolean(opts.verbose));
@@ -494,10 +494,10 @@ Examples:
       "after",
       `
 Examples:
-  clawdis sessions                 # list all sessions
-  clawdis sessions --active 120    # only last 2 hours
-  clawdis sessions --json          # machine-readable output
-  clawdis sessions --store ./tmp/sessions.json
+  hassoon sessions                 # list all sessions
+  hassoon sessions --active 120    # only last 2 hours
+  hassoon sessions --json          # machine-readable output
+  hassoon sessions --store ./tmp/sessions.json
 
 Shows token usage per session when the agent reports it; set agent.contextTokens to see % of your model window.`,
     )

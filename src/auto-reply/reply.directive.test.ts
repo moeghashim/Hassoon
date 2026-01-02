@@ -31,7 +31,7 @@ vi.mock("../agents/model-catalog.js", () => ({
 }));
 
 async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise<T> {
-  const base = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-reply-"));
+  const base = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-reply-"));
   const previousHome = process.env.HOME;
   process.env.HOME = base;
   try {
@@ -116,7 +116,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
           },
           whatsapp: {
             allowFrom: ["*"],
@@ -143,7 +143,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
           },
           session: { store: path.join(home, "sessions.json") },
         },
@@ -166,7 +166,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
           },
           whatsapp: { allowFrom: ["*"] },
           session: { store: storePath },
@@ -193,7 +193,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
           },
           whatsapp: { allowFrom: ["*"] },
           session: { store: storePath },
@@ -206,7 +206,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
           },
           whatsapp: { allowFrom: ["*"] },
           session: { store: storePath },
@@ -262,7 +262,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
           },
           whatsapp: {
             allowFrom: ["*"],
@@ -323,7 +323,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
           },
           whatsapp: {
             allowFrom: ["*"],
@@ -351,7 +351,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
             allowedModels: ["anthropic/claude-opus-4-5", "openai/gpt-4.1-mini"],
           },
           session: { store: storePath },
@@ -377,7 +377,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
             allowedModels: ["anthropic/claude-opus-4-5", "openai/gpt-4.1-mini"],
           },
           session: { store: storePath },
@@ -403,7 +403,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
             allowedModels: ["openai/gpt-4.1-mini"],
           },
           session: { store: storePath },
@@ -431,7 +431,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "openai/gpt-4.1-mini",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
             allowedModels: ["openai/gpt-4.1-mini", "anthropic/claude-opus-4-5"],
             modelAliases: {
               Opus: "anthropic/claude-opus-4-5",
@@ -464,7 +464,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "openai/gpt-4.1-mini",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
             allowedModels: ["openai/gpt-4.1-mini", "anthropic/claude-opus-4-5"],
             modelAliases: {
               Opus: "anthropic/claude-opus-4-5",
@@ -503,7 +503,7 @@ describe("directive parsing", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: path.join(home, "clawd"),
+            workspace: path.join(home, "hassoon"),
             allowedModels: ["openai/gpt-4.1-mini"],
           },
           whatsapp: {

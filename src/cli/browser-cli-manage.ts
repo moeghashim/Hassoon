@@ -51,7 +51,7 @@ export function registerBrowserManageCommands(
 
   browser
     .command("start")
-    .description("Start the clawd browser (no-op if already running)")
+    .description("Start the hassoon browser (no-op if already running)")
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       const baseUrl = resolveBrowserControlUrl(parent?.url);
@@ -62,7 +62,7 @@ export function registerBrowserManageCommands(
           defaultRuntime.log(JSON.stringify(status, null, 2));
           return;
         }
-        defaultRuntime.log(info(`🦞 clawd browser running: ${status.running}`));
+        defaultRuntime.log(info(`🦞 hassoon browser running: ${status.running}`));
       } catch (err) {
         defaultRuntime.error(danger(String(err)));
         defaultRuntime.exit(1);
@@ -71,7 +71,7 @@ export function registerBrowserManageCommands(
 
   browser
     .command("stop")
-    .description("Stop the clawd browser (best-effort)")
+    .description("Stop the hassoon browser (best-effort)")
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       const baseUrl = resolveBrowserControlUrl(parent?.url);
@@ -82,7 +82,7 @@ export function registerBrowserManageCommands(
           defaultRuntime.log(JSON.stringify(status, null, 2));
           return;
         }
-        defaultRuntime.log(info(`🦞 clawd browser running: ${status.running}`));
+        defaultRuntime.log(info(`🦞 hassoon browser running: ${status.running}`));
       } catch (err) {
         defaultRuntime.error(danger(String(err)));
         defaultRuntime.exit(1);
@@ -91,7 +91,7 @@ export function registerBrowserManageCommands(
 
   browser
     .command("reset-profile")
-    .description("Reset clawd browser profile (moves it to Trash)")
+    .description("Reset hassoon browser profile (moves it to Trash)")
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       const baseUrl = resolveBrowserControlUrl(parent?.url);
@@ -102,12 +102,12 @@ export function registerBrowserManageCommands(
           return;
         }
         if (!result.moved) {
-          defaultRuntime.log(info("🦞 clawd browser profile already missing."));
+          defaultRuntime.log(info("🦞 hassoon browser profile already missing."));
           return;
         }
         const dest = result.to ?? result.from;
         defaultRuntime.log(
-          info(`🦞 clawd browser profile moved to Trash (${dest})`),
+          info(`🦞 hassoon browser profile moved to Trash (${dest})`),
         );
       } catch (err) {
         defaultRuntime.error(danger(String(err)));

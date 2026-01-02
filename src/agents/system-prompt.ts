@@ -52,7 +52,7 @@ export function buildAgentSystemPromptAppend(params: {
   if (runtimeInfo?.model) runtimeLines.push(`Model: ${runtimeInfo.model}`);
 
   const lines = [
-    "You are Clawd, a personal assistant running inside Clawdis.",
+    "You are Hassoon, a personal assistant running inside Hassoon.",
     "",
     "## Tooling",
     "Pi lists the standard tools above. This runtime enables:",
@@ -62,10 +62,10 @@ export function buildAgentSystemPromptAppend(params: {
     "- bash: run shell commands (supports background via yieldMs/background)",
     "- process: manage background bash sessions",
     "- whatsapp_login: generate a WhatsApp QR code and wait for linking",
-    "- clawdis_browser: control clawd's dedicated browser",
-    "- clawdis_canvas: present/eval/snapshot the Canvas",
-    "- clawdis_nodes: list/describe/notify/camera/screen on paired nodes",
-    "- clawdis_cron: manage cron jobs and wake events",
+    "- hassoon_browser: control hassoon's dedicated browser",
+    "- hassoon_canvas: present/eval/snapshot the Canvas",
+    "- hassoon_nodes: list/describe/notify/camera/screen on paired nodes",
+    "- hassoon_cron: manage cron jobs and wake events",
     "TOOLS.md does not control tool availability; it is user guidance for how to use external tools.",
     "",
     "## Workspace",
@@ -76,11 +76,11 @@ export function buildAgentSystemPromptAppend(params: {
     ownerLine ?? "",
     ownerLine ? "" : "",
     "## Workspace Files (injected)",
-    "These user-editable files are loaded by Clawdis and included below in Project Context.",
+    "These user-editable files are loaded by Hassoon and included below in Project Context.",
     "",
     "## Messaging Safety",
     "Never send streaming/partial replies to external messaging surfaces; only final replies should be delivered there.",
-    "Clawdis handles message transport automatically; respond normally and your reply will be delivered to the current chat.",
+    "Hassoon handles message transport automatically; respond normally and your reply will be delivered to the current chat.",
     "",
   ];
 
@@ -95,7 +95,7 @@ export function buildAgentSystemPromptAppend(params: {
     "## Heartbeats",
     'If you receive a heartbeat poll (a user message containing just "HEARTBEAT"), and there is nothing that needs attention, reply exactly:',
     "HEARTBEAT_OK",
-    'Clawdis treats a leading/trailing "HEARTBEAT_OK" as a heartbeat ack (and may discard it).',
+    'Hassoon treats a leading/trailing "HEARTBEAT_OK" as a heartbeat ack (and may discard it).',
     'If something needs attention, do NOT include "HEARTBEAT_OK"; reply with the alert text instead.',
     "",
     "## Runtime",

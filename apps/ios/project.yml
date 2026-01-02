@@ -1,36 +1,36 @@
-name: Clawdis
+name: Hassoon
 options:
-  bundleIdPrefix: com.steipete.clawdis
+  bundleIdPrefix: com.moeghashim.hassoon
   deploymentTarget:
     iOS: "17.0"
   xcodeVersion: "16.0"
 
 packages:
-  ClawdisKit:
-    path: ../shared/ClawdisKit
+  HassoonKit:
+    path: ../shared/HassoonKit
   Swabble:
     path: ../../Swabble
 
 schemes:
-  Clawdis:
+  Hassoon:
     shared: true
     build:
       targets:
-        Clawdis: all
+        Hassoon: all
     test:
       targets:
-        - ClawdisTests
+        - HassoonTests
 
 targets:
-  Clawdis:
+  Hassoon:
     type: application
     platform: iOS
     sources:
       - path: Sources
     dependencies:
-      - package: ClawdisKit
-      - package: ClawdisKit
-        product: ClawdisChatUI
+      - package: HassoonKit
+      - package: HassoonKit
+        product: HassoonChatUI
       - package: Swabble
         product: SwabbleKit
       - sdk: AppIntents.framework
@@ -65,44 +65,44 @@ targets:
         CODE_SIGN_IDENTITY: "Apple Development"
         CODE_SIGN_STYLE: Manual
         DEVELOPMENT_TEAM: Y5PE65HELJ
-        PRODUCT_BUNDLE_IDENTIFIER: com.steipete.clawdis.ios
-        PROVISIONING_PROFILE_SPECIFIER: "com.steipete.clawdis.ios Development"
+        PRODUCT_BUNDLE_IDENTIFIER: com.moeghashim.hassoon.ios
+        PROVISIONING_PROFILE_SPECIFIER: "com.moeghashim.hassoon.ios Development"
         SWIFT_VERSION: "6.0"
     info:
       path: Sources/Info.plist
       properties:
-        CFBundleDisplayName: Clawdis
+        CFBundleDisplayName: Hassoon
         CFBundleIconName: AppIcon
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UIBackgroundModes:
           - audio
-        NSLocalNetworkUsageDescription: Clawdis discovers and connects to your Clawdis bridge on the local network.
+        NSLocalNetworkUsageDescription: Hassoon discovers and connects to your Hassoon bridge on the local network.
         NSAppTransportSecurity:
           NSAllowsArbitraryLoadsInWebContent: true
         NSBonjourServices:
-          - _clawdis-bridge._tcp
-        NSCameraUsageDescription: Clawdis can capture photos or short video clips when requested via the bridge.
-        NSMicrophoneUsageDescription: Clawdis needs microphone access for voice wake.
-        NSSpeechRecognitionUsageDescription: Clawdis uses on-device speech recognition for voice wake.
+          - _hassoon-bridge._tcp
+        NSCameraUsageDescription: Hassoon can capture photos or short video clips when requested via the bridge.
+        NSMicrophoneUsageDescription: Hassoon needs microphone access for voice wake.
+        NSSpeechRecognitionUsageDescription: Hassoon uses on-device speech recognition for voice wake.
 
-  ClawdisTests:
+  HassoonTests:
     type: bundle.unit-test
     platform: iOS
     sources:
       - path: Tests
     dependencies:
-      - target: Clawdis
+      - target: Hassoon
       - package: Swabble
         product: SwabbleKit
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.steipete.clawdis.ios.tests
+        PRODUCT_BUNDLE_IDENTIFIER: com.moeghashim.hassoon.ios.tests
         SWIFT_VERSION: "6.0"
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Clawdis.app/Clawdis"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Hassoon.app/Hassoon"
         BUNDLE_LOADER: "$(TEST_HOST)"
     info:
       path: Tests/Info.plist
       properties:
-        CFBundleDisplayName: ClawdisTests
+        CFBundleDisplayName: HassoonTests

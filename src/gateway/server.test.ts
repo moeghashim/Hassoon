@@ -7,9 +7,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { WebSocket } from "ws";
 import { agentCommand } from "../commands/agent.js";
 import {
-  CONFIG_PATH_CLAWDIS,
+  CONFIG_PATH_HASSOON,
   readConfigFileSnapshot,
-  STATE_DIR_CLAWDIS,
+  STATE_DIR_HASSOON,
   writeConfigFile,
 } from "../config/config.js";
 import {
@@ -153,7 +153,7 @@ vi.mock("../config/sessions.js", async () => {
 });
 vi.mock("../config/config.js", () => {
   const resolveConfigPath = () =>
-    path.join(os.homedir(), ".clawdis", "clawdis.json");
+    path.join(os.homedir(), ".hassoon", "hassoon.json");
 
   const readConfigFileSnapshot = async () => {
     if (testLegacyIssues.length > 0) {
@@ -221,8 +221,8 @@ vi.mock("../config/config.js", () => {
   });
 
   return {
-    CONFIG_PATH_CLAWDIS: resolveConfigPath(),
-    STATE_DIR_CLAWDIS: path.dirname(resolveConfigPath()),
+    CONFIG_PATH_HASSOON: resolveConfigPath(),
+    STATE_DIR_HASSOON: path.dirname(resolveConfigPath()),
     isNixMode: testIsNixMode,
     migrateLegacyConfig: (raw: unknown) => ({
       config: testMigrationConfig ?? (raw as Record<string, unknown>),
@@ -231,7 +231,7 @@ vi.mock("../config/config.js", () => {
     loadConfig: () => ({
       agent: {
         model: "anthropic/claude-opus-4-5",
-        workspace: path.join(os.tmpdir(), "clawd-gateway-test"),
+        workspace: path.join(os.tmpdir(), "hassoon-gateway-test"),
       },
       whatsapp: {
         allowFrom: testAllowFrom,
@@ -291,14 +291,14 @@ vi.mock("../commands/agent.js", () => ({
   agentCommand: vi.fn().mockResolvedValue(undefined),
 }));
 
-process.env.CLAWDIS_SKIP_PROVIDERS = "1";
+process.env.HASSOON_SKIP_PROVIDERS = "1";
 
 let previousHome: string | undefined;
 let tempHome: string | undefined;
 
 beforeEach(async () => {
   previousHome = process.env.HOME;
-  tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gateway-home-"));
+  tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gateway-home-"));
   process.env.HOME = tempHome;
   sessionStoreSaveDelayMs.value = 0;
   testTailnetIPv4.value = undefined;
@@ -380,11 +380,11 @@ function onceMessage<T = unknown>(
 
 async function startServerWithClient(token?: string) {
   const port = await getFreePort();
-  const prev = process.env.CLAWDIS_GATEWAY_TOKEN;
+  const prev = process.env.HASSOON_GATEWAY_TOKEN;
   if (token === undefined) {
-    delete process.env.CLAWDIS_GATEWAY_TOKEN;
+    delete process.env.HASSOON_GATEWAY_TOKEN;
   } else {
-    process.env.CLAWDIS_GATEWAY_TOKEN = token;
+    process.env.HASSOON_GATEWAY_TOKEN = token;
   }
   const server = await startGatewayServer(port);
   const ws = new WebSocket(`ws://127.0.0.1:${port}`);
@@ -491,7 +491,7 @@ describe("gateway server", () => {
     "voicewake.get returns defaults and voicewake.set broadcasts",
     { timeout: 15_000 },
     async () => {
-      const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-home-"));
+      const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-home-"));
       const prevHome = process.env.HOME;
       process.env.HOME = homeDir;
 
@@ -501,7 +501,7 @@ describe("gateway server", () => {
       const initial = await rpcReq<{ triggers: string[] }>(ws, "voicewake.get");
       expect(initial.ok).toBe(true);
       expect(initial.payload?.triggers).toEqual([
-        "clawd",
+        "hassoon",
         "claude",
         "computer",
       ]);
@@ -530,7 +530,7 @@ describe("gateway server", () => {
 
       const onDisk = JSON.parse(
         await fs.readFile(
-          path.join(homeDir, ".clawdis", "settings", "voicewake.json"),
+          path.join(homeDir, ".hassoon", "settings", "voicewake.json"),
           "utf8",
         ),
       ) as { triggers?: unknown; updatedAtMs?: unknown };
@@ -715,7 +715,7 @@ describe("gateway server", () => {
   });
 
   test("pushes voicewake.changed to nodes on connect and on updates", async () => {
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-home-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-home-"));
     const prevHome = process.env.HOME;
     process.env.HOME = homeDir;
 
@@ -737,12 +737,12 @@ describe("gateway server", () => {
     const firstPayload = JSON.parse(String(first?.payloadJSON)) as {
       triggers?: unknown;
     };
-    expect(firstPayload.triggers).toEqual(["clawd", "claude", "computer"]);
+    expect(firstPayload.triggers).toEqual(["hassoon", "claude", "computer"]);
 
     bridgeSendEvent.mockClear();
 
     const setRes = await rpcReq<{ triggers: string[] }>(ws, "voicewake.set", {
-      triggers: ["clawd", "computer"],
+      triggers: ["hassoon", "computer"],
     });
     expect(setRes.ok).toBe(true);
 
@@ -753,7 +753,7 @@ describe("gateway server", () => {
     const broadcastPayload = JSON.parse(String(broadcast?.payloadJSON)) as {
       triggers?: unknown;
     };
-    expect(broadcastPayload.triggers).toEqual(["clawd", "computer"]);
+    expect(broadcastPayload.triggers).toEqual(["hassoon", "computer"]);
 
     ws.close();
     await server.close();
@@ -766,7 +766,7 @@ describe("gateway server", () => {
   });
 
   test("supports gateway-owned node pairing methods and events", async () => {
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-home-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-home-"));
     const prevHome = process.env.HOME;
     process.env.HOME = homeDir;
 
@@ -909,7 +909,7 @@ describe("gateway server", () => {
   });
 
   test("routes node.invoke to the node bridge", async () => {
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-home-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-home-"));
     const prevHome = process.env.HOME;
     process.env.HOME = homeDir;
 
@@ -958,7 +958,7 @@ describe("gateway server", () => {
   });
 
   test("node.describe returns supported invoke commands for paired nodes", async () => {
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-home-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-home-"));
     const prevHome = process.env.HOME;
     process.env.HOME = homeDir;
 
@@ -1016,7 +1016,7 @@ describe("gateway server", () => {
   });
 
   test("node.describe works for connected unpaired nodes (caps + commands)", async () => {
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-home-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-home-"));
     const prevHome = process.env.HOME;
     process.env.HOME = homeDir;
 
@@ -1076,7 +1076,7 @@ describe("gateway server", () => {
   });
 
   test("node.list includes connected unpaired nodes with capabilities + commands", async () => {
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-home-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-home-"));
     const prevHome = process.env.HOME;
     process.env.HOME = homeDir;
 
@@ -1183,7 +1183,7 @@ describe("gateway server", () => {
   });
 
   test("emits presence updates for bridge connect/disconnect", async () => {
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-home-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-home-"));
     const prevHome = process.env.HOME;
     process.env.HOME = homeDir;
     try {
@@ -1252,7 +1252,7 @@ describe("gateway server", () => {
   });
 
   test("supports cron.add and cron.list", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-cron-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-cron-"));
     testCronStorePath = path.join(dir, "cron", "jobs.json");
     await fs.mkdir(path.dirname(testCronStorePath), { recursive: true });
     await fs.writeFile(
@@ -1317,7 +1317,7 @@ describe("gateway server", () => {
 
   test("writes cron run history to runs/<jobId>.jsonl", async () => {
     const dir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "clawdis-gw-cron-log-"),
+      path.join(os.tmpdir(), "hassoon-gw-cron-log-"),
     );
     testCronStorePath = path.join(dir, "cron", "jobs.json");
     await fs.mkdir(path.dirname(testCronStorePath), { recursive: true });
@@ -1427,7 +1427,7 @@ describe("gateway server", () => {
 
   test("writes cron run history to per-job runs/ when store is jobs.json", async () => {
     const dir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "clawdis-gw-cron-log-jobs-"),
+      path.join(os.tmpdir(), "hassoon-gw-cron-log-jobs-"),
     );
     const cronDir = path.join(dir, "cron");
     testCronStorePath = path.join(cronDir, "jobs.json");
@@ -1536,7 +1536,7 @@ describe("gateway server", () => {
 
   test("enables cron scheduler by default and runs due jobs automatically", async () => {
     const dir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "clawdis-gw-cron-default-on-"),
+      path.join(os.tmpdir(), "hassoon-gw-cron-default-on-"),
     );
     testCronStorePath = path.join(dir, "cron", "jobs.json");
     testCronEnabled = undefined; // omitted config => enabled by default
@@ -1726,7 +1726,7 @@ describe("gateway server", () => {
 
   test("agent falls back to allowFrom when lastTo is stale", async () => {
     testAllowFrom = ["+436769770569"];
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -1781,7 +1781,7 @@ describe("gateway server", () => {
 
   test("agent routes main last-channel whatsapp", async () => {
     testAllowFrom = undefined;
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -1836,7 +1836,7 @@ describe("gateway server", () => {
   });
 
   test("agent routes main last-channel telegram", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -1888,7 +1888,7 @@ describe("gateway server", () => {
   });
 
   test("agent routes main last-channel discord", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -1943,7 +1943,7 @@ describe("gateway server", () => {
   });
 
   test("agent routes main last-channel signal", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -1999,7 +1999,7 @@ describe("gateway server", () => {
 
   test("agent ignores webchat last-channel for routing", async () => {
     testAllowFrom = ["+1555"];
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -2051,8 +2051,8 @@ describe("gateway server", () => {
   });
 
   test("hello-ok advertises the gateway port for canvas host", async () => {
-    const prevToken = process.env.CLAWDIS_GATEWAY_TOKEN;
-    process.env.CLAWDIS_GATEWAY_TOKEN = "secret";
+    const prevToken = process.env.HASSOON_GATEWAY_TOKEN;
+    process.env.HASSOON_GATEWAY_TOKEN = "secret";
     testTailnetIPv4.value = "100.64.0.1";
     testGatewayBind = "lan";
     const canvasPort = await getFreePort();
@@ -2074,9 +2074,9 @@ describe("gateway server", () => {
     ws.close();
     await server.close();
     if (prevToken === undefined) {
-      delete process.env.CLAWDIS_GATEWAY_TOKEN;
+      delete process.env.HASSOON_GATEWAY_TOKEN;
     } else {
-      process.env.CLAWDIS_GATEWAY_TOKEN = prevToken;
+      process.env.HASSOON_GATEWAY_TOKEN = prevToken;
     }
   });
 
@@ -2102,7 +2102,7 @@ describe("gateway server", () => {
     expect(res.error?.message ?? "").toContain("unauthorized");
     ws.close();
     await server.close();
-    process.env.CLAWDIS_GATEWAY_TOKEN = prevToken;
+    process.env.HASSOON_GATEWAY_TOKEN = prevToken;
   });
 
   test("accepts password auth when configured", async () => {
@@ -2185,8 +2185,8 @@ describe("gateway server", () => {
         }
       | undefined;
     expect(payload?.type).toBe("hello-ok");
-    expect(payload?.snapshot?.configPath).toBe(CONFIG_PATH_CLAWDIS);
-    expect(payload?.snapshot?.stateDir).toBe(STATE_DIR_CLAWDIS);
+    expect(payload?.snapshot?.configPath).toBe(CONFIG_PATH_HASSOON);
+    expect(payload?.snapshot?.stateDir).toBe(STATE_DIR_HASSOON);
     ws.close();
     await server.close();
   });
@@ -2649,7 +2649,7 @@ describe("gateway server", () => {
       return typeof text === "string" ? text : undefined;
     };
 
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -2756,7 +2756,7 @@ describe("gateway server", () => {
   });
 
   test("chat.history caps payload bytes", { timeout: 15_000 }, async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -2811,7 +2811,7 @@ describe("gateway server", () => {
   });
 
   test("chat.send does not overwrite last delivery route", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -2869,7 +2869,7 @@ describe("gateway server", () => {
     "chat.abort cancels an in-flight chat.send",
     { timeout: 15000 },
     async () => {
-      const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+      const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
       testSessionStorePath = path.join(dir, "sessions.json");
       await fs.writeFile(
         testSessionStorePath,
@@ -2974,7 +2974,7 @@ describe("gateway server", () => {
   );
 
   test("chat.abort cancels while saving the session store", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3061,7 +3061,7 @@ describe("gateway server", () => {
   });
 
   test("chat.abort returns aborted=false for unknown runId", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3096,7 +3096,7 @@ describe("gateway server", () => {
   });
 
   test("chat.abort rejects mismatched sessionKey", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3195,7 +3195,7 @@ describe("gateway server", () => {
   }, 15_000);
 
   test("chat.abort is a no-op after chat.send completes", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3259,7 +3259,7 @@ describe("gateway server", () => {
   });
 
   test("chat.send preserves run ordering for queued runs", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3374,7 +3374,7 @@ describe("gateway server", () => {
   });
 
   test("bridge RPC chat.history returns session messages", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3433,7 +3433,7 @@ describe("gateway server", () => {
   });
 
   test("bridge RPC sessions.list returns session rows", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3481,7 +3481,7 @@ describe("gateway server", () => {
   });
 
   test("bridge chat events are pushed to subscribed nodes", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3561,7 +3561,7 @@ describe("gateway server", () => {
   });
 
   test("bridge voice transcript defaults to main session", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3609,7 +3609,7 @@ describe("gateway server", () => {
   });
 
   test("bridge voice transcript triggers chat events for webchat clients", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3693,7 +3693,7 @@ describe("gateway server", () => {
   });
 
   test("agent events stream to webchat clients when run context is registered", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3762,7 +3762,7 @@ describe("gateway server", () => {
   });
 
   test("bridge chat.abort cancels while saving the session store", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-gw-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-gw-"));
     testSessionStorePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       testSessionStorePath,
@@ -3899,7 +3899,7 @@ describe("gateway server", () => {
   });
 
   test("lists and patches session store via sessions.* RPC", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-sessions-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-sessions-"));
     const storePath = path.join(dir, "sessions.json");
     const now = Date.now();
     testSessionStorePath = storePath;
@@ -4201,7 +4201,7 @@ describe("gateway server", () => {
     await server.close();
   });
 
-  test("hooks wake accepts x-clawdis-token header", async () => {
+  test("hooks wake accepts x-hassoon-token header", async () => {
     testHooksConfig = { enabled: true, token: "hook-secret" };
     const port = await getFreePort();
     const server = await startGatewayServer(port);
@@ -4209,7 +4209,7 @@ describe("gateway server", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-clawdis-token": "hook-secret",
+        "x-hassoon-token": "hook-secret",
       },
       body: JSON.stringify({ text: "Header auth" }),
     });

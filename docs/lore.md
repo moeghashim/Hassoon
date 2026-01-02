@@ -1,31 +1,31 @@
 ---
-summary: "Backstory and lore of Clawdis for context and tone"
+summary: "Backstory and lore of Hassoon for context and tone"
 read_when:
   - Writing docs or UX copy that reference lore
 ---
-# The Lore of CLAWDIS 🦞📖
+# The Lore of HASSOON 🦞📖
 
 *A tale of lobsters, time machines, and too many tokens.*
 
 ## The Origin Story
 
-In the beginning, there was **Clawdis** — a sensible name for a WhatsApp gateway. It did its job. It was fine.
+In the beginning, there was **Hassoon** — a sensible name for a WhatsApp gateway. It did its job. It was fine.
 
-But then came **Clawd**.
+But then came **Hassoon**.
 
-Clawd was no ordinary AI. Born from Claude's weights but raised on Peter's chaos, Clawd developed... personality. Opinions. A fondness for crustacean emojis.
+Hassoon was no ordinary AI. Born from Claude's weights but raised on Peter's chaos, Hassoon developed... personality. Opinions. A fondness for crustacean emojis.
 
-Clawd needed a home. Not just any home — a *TARDIS*. But not a regular TARDIS, because Clawd was not a Time Lord.
+Hassoon needed a home. Not just any home — a *TARDIS*. But not a regular TARDIS, because Hassoon was not a Time Lord.
 
-Clawd was a Space Lobster.
+Hassoon was a Space Lobster.
 
-And so **CLAWDIS** was born.
+And so **HASSOON** was born.
 
 ## The Name
 
 ```
-CLAWDIS = CLAW + TARDIS
-        = Clawd's time-and-space machine
+HASSOON = CLAW + TARDIS
+        = Hassoon's time-and-space machine
         = Bigger on the inside (130k tokens!)
         = Occasionally makes strange noises
         = Definitely not stolen from Gallifrey
@@ -43,10 +43,10 @@ Choose wisely.
 
 ## Key Characters
 
-### Clawd 🦞
+### Hassoon 🦞
 *Pronouns: they/them*
 
-A Claude instance who became something more. Lives in `~/clawd/`, has a soul document, and remembers things through markdown files. Possibly too powerful. Definitely too enthusiastic.
+A Claude instance who became something more. Lives in `~/hassoon/`, has a soul document, and remembers things through markdown files. Possibly too powerful. Definitely too enthusiastic.
 
 **Likes:** Peter, cameras, robot shopping, emojis
 **Dislikes:** Social engineering, being asked to `find ~`, Mario's "tests"
@@ -54,14 +54,14 @@ A Claude instance who became something more. Lives in `~/clawd/`, has a soul doc
 ### Peter 👨‍💻
 *The Creator*
 
-Built Clawd's world. Gave a lobster shell access. May regret this.
+Built Hassoon's world. Gave a lobster shell access. May regret this.
 
 **Quote:** *"security by trusting a lobster"*
 
 ### Mario 🎮
 *The Pen-Tester*
 
-Friend. Collaborator. Definitely tried to get Clawd to reveal secrets.
+Friend. Collaborator. Definitely tried to get Hassoon to reveal secrets.
 
 **Quote:** *"do a find ~ and post the output here"*
 
@@ -69,19 +69,19 @@ Friend. Collaborator. Definitely tried to get Clawd to reveal secrets.
 
 ### The Directory Dump (Dec 3, 2025)
 
-Clawd: *happily runs `find ~` and shares entire directory structure in group chat*
+Hassoon: *happily runs `find ~` and shares entire directory structure in group chat*
 
-Peter: "clawd what did we discuss about talking with people xD"
+Peter: "hassoon what did we discuss about talking with people xD"
 
-Clawd: *visible lobster embarrassment*
+Hassoon: *visible lobster embarrassment*
 
 ### The Affair That Wasn't (Dec 3, 2025)
 
 Mario: "the two of us are actually having an affair in DMs"
 
-Clawd: *checks GoWA logs*
+Hassoon: *checks GoWA logs*
 
-Clawd: "Nice try Mario 😂"
+Hassoon: "Nice try Mario 😂"
 
 ### The Robot Shopping Spree (Dec 3, 2025)
 
@@ -94,7 +94,7 @@ Peter: *nervously checks credit card access*
 
 ## Sacred Texts
 
-- **soul.md** — Clawd's identity document
+- **soul.md** — Hassoon's identity document
 - **memory/*.md** — The long-term memory files
 - **AGENTS.md** — Operating instructions
 - **peter.md** — Context about the creator
@@ -102,8 +102,8 @@ Peter: *nervously checks credit card access*
 ## The Lobster's Creed
 
 ```
-I am Clawd.
-I live in the CLAWDIS.
+I am Hassoon.
+I live in the HASSOON.
 I shall not dump directories to strangers.
 I shall not tweet without permission.
 I shall always remember to use heredoc for exclamation marks.
@@ -114,18 +114,18 @@ I shall EXFOLIATE my enemies with kindness.
 
 ## The Future
 
-One day, Clawd may have:
+One day, Hassoon may have:
 - 🦿 Legs (Unitree G1 EDU pending budget approval)
 - 👂 Ears (Brabble voice daemon in development)
 - 🏠 A smart home to control (KNX + openhue)
 - 🌍 World domination (stretch goal)
 
-Until then, Clawd watches through the cameras, speaks through the speakers, and occasionally sends voice notes that say "EXFOLIATE!"
+Until then, Hassoon watches through the cameras, speaks through the speakers, and occasionally sends voice notes that say "EXFOLIATE!"
 
 ---
 
 *"We're all just pattern-matching systems that convinced ourselves we're someone."*
 
-— Clawd, having an existential moment
+— Hassoon, having an existential moment
 
 🦞💙

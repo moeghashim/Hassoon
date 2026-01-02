@@ -8,10 +8,10 @@ export type VoiceWakeConfig = {
   updatedAtMs: number;
 };
 
-const DEFAULT_TRIGGERS = ["clawd", "claude", "computer"];
+const DEFAULT_TRIGGERS = ["hassoon", "claude", "computer"];
 
 function defaultBaseDir() {
-  return path.join(os.homedir(), ".clawdis");
+  return path.join(os.homedir(), ".hassoon");
 }
 
 function resolvePath(baseDir?: string) {

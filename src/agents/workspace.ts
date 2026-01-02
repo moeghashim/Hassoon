@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import { resolveUserPath } from "../utils.js";
 
-export const DEFAULT_AGENT_WORKSPACE_DIR = path.join(os.homedir(), "clawd");
+export const DEFAULT_AGENT_WORKSPACE_DIR = path.join(os.homedir(), "hassoon");
 export const DEFAULT_AGENTS_FILENAME = "AGENTS.md";
 export const DEFAULT_SOUL_FILENAME = "SOUL.md";
 export const DEFAULT_TOOLS_FILENAME = "TOOLS.md";
@@ -13,7 +13,7 @@ export const DEFAULT_IDENTITY_FILENAME = "IDENTITY.md";
 export const DEFAULT_USER_FILENAME = "USER.md";
 export const DEFAULT_BOOTSTRAP_FILENAME = "BOOTSTRAP.md";
 
-const DEFAULT_AGENTS_TEMPLATE = `# AGENTS.md - Clawdis Workspace
+const DEFAULT_AGENTS_TEMPLATE = `# AGENTS.md - Hassoon Workspace
 
 This folder is the assistant's working directory.
 
@@ -58,7 +58,7 @@ Describe who the assistant is, tone, and boundaries.
 const DEFAULT_TOOLS_TEMPLATE = `# TOOLS.md - User Tool Notes (editable)
 
 This file is for *your* notes about external tools and conventions.
-It does not define which tools exist; Clawdis provides built-in tools internally.
+It does not define which tools exist; Hassoon provides built-in tools internally.
 
 ## Examples
 
@@ -108,7 +108,7 @@ After the user chooses, update:
 - Timezone (optional)
 - Notes
 
-3) ~/.clawdis/clawdis.json
+3) ~/.hassoon/hassoon.json
 Set identity.name, identity.theme, identity.emoji to match IDENTITY.md.
 
 ## Cleanup

@@ -1,17 +1,17 @@
-import ClawdisKit
+import HassoonKit
 import Network
 import Testing
-@testable import Clawdis
+@testable import Hassoon
 
 @Suite struct BridgeEndpointIDTests {
     @Test func stableIDForServiceDecodesAndNormalizesName() {
         let endpoint = NWEndpoint.service(
-            name: "Clawdis\\032Bridge   \\032  Node\n",
-            type: "_clawdis-bridge._tcp",
+            name: "Hassoon\\032Bridge   \\032  Node\n",
+            type: "_hassoon-bridge._tcp",
             domain: "local.",
             interface: nil)
 
-        #expect(BridgeEndpointID.stableID(endpoint) == "_clawdis-bridge._tcp|local.|Clawdis Bridge Node")
+        #expect(BridgeEndpointID.stableID(endpoint) == "_hassoon-bridge._tcp|local.|Hassoon Bridge Node")
     }
 
     @Test func stableIDForNonServiceUsesEndpointDescription() {
@@ -21,8 +21,8 @@ import Testing
 
     @Test func prettyDescriptionDecodesBonjourEscapes() {
         let endpoint = NWEndpoint.service(
-            name: "Clawdis\\032Bridge",
-            type: "_clawdis-bridge._tcp",
+            name: "Hassoon\\032Bridge",
+            type: "_hassoon-bridge._tcp",
             domain: "local.",
             interface: nil)
 

@@ -2,16 +2,16 @@
 summary: "Spec: integrated browser control server + action commands"
 read_when:
   - Adding agent-controlled browser automation
-  - Debugging why clawd is interfering with your own Chrome
+  - Debugging why hassoon is interfering with your own Chrome
   - Implementing browser settings + lifecycle in the macOS app
 ---
 
-# Browser (integrated) — clawd-managed Chrome
+# Browser (integrated) — hassoon-managed Chrome
 
 Status: draft spec · Date: 2025-12-20
 
-Goal: give the **clawd** persona its own browser that is:
-- Visually distinct (lobster-orange, profile labeled "clawd").
+Goal: give the **hassoon** persona its own browser that is:
+- Visually distinct (lobster-orange, profile labeled "hassoon").
 - Fully agent-manageable (start/stop, list tabs, focus/close tabs, open URLs, screenshot).
 - Non-interfering with the user's own browser (separate profile + dedicated ports).
 
@@ -22,22 +22,22 @@ Playwright vs Puppeteer; the key is the **contract** and the **separation guaran
 
 Add a dedicated settings section (preferably under **Skills** or its own "Browser" tab):
 
-- **Enable clawd browser** (`default: on`)
+- **Enable hassoon browser** (`default: on`)
   - When off: no browser is launched, and browser tools return "disabled".
 - **Browser control URL** (`default: http://127.0.0.1:18791`)
   - Interpreted as the base URL of the local/remote browser-control server.
-  - If the URL host is not loopback, Clawdis must **not** attempt to launch a local
+  - If the URL host is not loopback, Hassoon must **not** attempt to launch a local
     browser; it only connects.
 - **CDP URL** (`default: controlUrl + 1`)
   - Base URL for Chrome DevTools Protocol (e.g. `http://127.0.0.1:18792`).
   - Set this to a non-loopback host to attach the local control server to a remote
     Chrome/Chromium CDP endpoint (SSH/Tailscale tunnel recommended).
-  - If the CDP URL host is non-loopback, clawd does **not** auto-launch a local browser.
+  - If the CDP URL host is non-loopback, hassoon does **not** auto-launch a local browser.
   - If you tunnel a remote CDP to `localhost`, set **Attach to existing only** to
     avoid accidentally launching a local browser.
 - **Accent color** (`default: #FF4500`, "lobster-orange")
-  - Used to theme the clawd browser profile (best-effort) and to tint UI indicators
-    in Clawdis.
+  - Used to theme the hassoon browser profile (best-effort) and to tint UI indicators
+    in Hassoon.
 
 Optional (advanced, can be hidden behind Debug initially):
 - **Use headless browser** (`default: off`)
@@ -48,14 +48,14 @@ Optional (advanced, can be hidden behind Debug initially):
 
 ### Port convention
 
-Clawdis already uses:
+Hassoon already uses:
 - Gateway WebSocket: `18789`
 - Bridge (voice/node): `18790`
 
-For the clawd browser-control server, use "family" ports:
+For the hassoon browser-control server, use "family" ports:
 - Browser control HTTP API: `18791` (bridge + 1)
 - Browser CDP/debugging port: `18792` (control + 1)
-- Canvas host HTTP: `18793` by default, mounted at `/__clawdis__/canvas/`
+- Canvas host HTTP: `18793` by default, mounted at `/__hassoon__/canvas/`
 
 The user usually only configures the **control URL** (port `18791`). CDP is an
 internal detail.
@@ -64,9 +64,9 @@ internal detail.
 
 1) **Dedicated user data dir**
    - Never attach to or reuse the user's default Chrome profile.
-   - Store clawd browser state under an app-owned directory, e.g.:
-     - `~/Library/Application Support/Clawdis/browser/clawd/` (mac app)
-     - or `~/.clawdis/browser/clawd/` (gateway/CLI)
+   - Store hassoon browser state under an app-owned directory, e.g.:
+     - `~/Library/Application Support/Hassoon/browser/hassoon/` (mac app)
+     - or `~/.hassoon/browser/hassoon/` (gateway/CLI)
 
 2) **Dedicated ports**
    - Never use `9222` (reserved for ad-hoc dev workflows; avoids colliding with
@@ -79,7 +79,7 @@ internal detail.
 
 ## Browser selection (macOS + Linux)
 
-On startup (when enabled + local URL), Clawdis chooses the browser executable
+On startup (when enabled + local URL), Hassoon chooses the browser executable
 in this order:
 1) **Google Chrome Canary** (if installed)
 2) **Chromium** (if installed)
@@ -100,8 +100,8 @@ Rationale:
 
 ## Visual differentiation ("lobster-orange")
 
-The clawd browser should be obviously different at a glance:
-- Profile name: **clawd**
+The hassoon browser should be obviously different at a glance:
+- Profile name: **hassoon**
 - Profile color: **#FF4500**
 
 Preferred behavior:
@@ -150,10 +150,10 @@ Hooks (arming):
 "Closed" means:
 - control server not reachable, or server reports no browser.
 
-Clawdis should treat "open/closed" as a health check (fast path), not by scanning
+Hassoon should treat "open/closed" as a health check (fast path), not by scanning
 global Chrome processes (avoid false positives).
 
-## Interaction with the agent (clawd)
+## Interaction with the agent (hassoon)
 
 The agent should use browser tools only when:
 - enabled in settings
@@ -169,39 +169,39 @@ The agent should not assume tabs are ephemeral. It should:
 ## CLI quick reference (one example each)
 
 Basics:
-- `clawdis browser status`
-- `clawdis browser start`
-- `clawdis browser stop`
-- `clawdis browser reset-profile`
-- `clawdis browser tabs`
-- `clawdis browser open https://example.com`
-- `clawdis browser focus abcd1234`
-- `clawdis browser close abcd1234`
+- `hassoon browser status`
+- `hassoon browser start`
+- `hassoon browser stop`
+- `hassoon browser reset-profile`
+- `hassoon browser tabs`
+- `hassoon browser open https://example.com`
+- `hassoon browser focus abcd1234`
+- `hassoon browser close abcd1234`
 
 Inspection:
-- `clawdis browser screenshot`
-- `clawdis browser screenshot --full-page`
-- `clawdis browser screenshot --ref 12`
-- `clawdis browser snapshot`
-- `clawdis browser snapshot --format aria --limit 200`
+- `hassoon browser screenshot`
+- `hassoon browser screenshot --full-page`
+- `hassoon browser screenshot --ref 12`
+- `hassoon browser snapshot`
+- `hassoon browser snapshot --format aria --limit 200`
 
 Actions:
-- `clawdis browser navigate https://example.com`
-- `clawdis browser resize 1280 720`
-- `clawdis browser click 12 --double`
-- `clawdis browser type 23 "hello" --submit`
-- `clawdis browser press Enter`
-- `clawdis browser hover 44`
-- `clawdis browser drag 10 11`
-- `clawdis browser select 9 OptionA OptionB`
-- `clawdis browser upload /tmp/file.pdf`
-- `clawdis browser fill --fields '[{\"ref\":\"1\",\"value\":\"Ada\"}]'`
-- `clawdis browser dialog --accept`
-- `clawdis browser wait --text "Done"`
-- `clawdis browser evaluate --fn '(el) => el.textContent' --ref 7`
-- `clawdis browser evaluate --fn "document.querySelector('.my-class').click()"`
-- `clawdis browser console --level error`
-- `clawdis browser pdf`
+- `hassoon browser navigate https://example.com`
+- `hassoon browser resize 1280 720`
+- `hassoon browser click 12 --double`
+- `hassoon browser type 23 "hello" --submit`
+- `hassoon browser press Enter`
+- `hassoon browser hover 44`
+- `hassoon browser drag 10 11`
+- `hassoon browser select 9 OptionA OptionB`
+- `hassoon browser upload /tmp/file.pdf`
+- `hassoon browser fill --fields '[{\"ref\":\"1\",\"value\":\"Ada\"}]'`
+- `hassoon browser dialog --accept`
+- `hassoon browser wait --text "Done"`
+- `hassoon browser evaluate --fn '(el) => el.textContent' --ref 7`
+- `hassoon browser evaluate --fn "document.querySelector('.my-class').click()"`
+- `hassoon browser console --level error`
+- `hassoon browser pdf`
 
 Notes:
 - `upload` and `dialog` are **arming** calls; run them before the click/press that triggers the chooser/dialog.
@@ -214,7 +214,7 @@ Notes:
 
 ## Security & privacy notes
 
-- The clawd browser profile is app-owned; it may contain logged-in sessions.
+- The hassoon browser profile is app-owned; it may contain logged-in sessions.
   Treat it as sensitive data.
 - The control server must bind to loopback only by default (`127.0.0.1`) unless the
   user explicitly configures a non-loopback URL.

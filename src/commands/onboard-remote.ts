@@ -1,6 +1,6 @@
 import { confirm, note, select, spinner, text } from "@clack/prompts";
 
-import type { ClawdisConfig } from "../config/config.js";
+import type { HassoonConfig } from "../config/config.js";
 import type { GatewayBonjourBeacon } from "../infra/bonjour-discovery.js";
 import { discoverGatewayBeacons } from "../infra/bonjour-discovery.js";
 import type { RuntimeEnv } from "../runtime.js";
@@ -27,9 +27,9 @@ function ensureWsUrl(value: string): string {
 }
 
 export async function promptRemoteGatewayConfig(
-  cfg: ClawdisConfig,
+  cfg: HassoonConfig,
   runtime: RuntimeEnv,
-): Promise<ClawdisConfig> {
+): Promise<HassoonConfig> {
   let selectedBeacon: GatewayBonjourBeacon | null = null;
   let suggestedUrl = cfg.gateway?.remote?.url ?? DEFAULT_GATEWAY_URL;
 

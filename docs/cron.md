@@ -1,24 +1,24 @@
 ---
-summary: "RFC: Cron jobs + wakeups for Clawd/Clawdis (main vs isolated sessions)"
+summary: "RFC: Cron jobs + wakeups for Hassoon/Hassoon (main vs isolated sessions)"
 read_when:
   - Designing scheduled jobs, alarms, or wakeups
   - Adding Gateway methods or CLI commands for automation
   - Adjusting heartbeat behavior or session routing
 ---
 
-# RFC: Cron jobs + wakeups for Clawd
+# RFC: Cron jobs + wakeups for Hassoon
 
 Status: Draft  
 Last updated: 2025-12-13
 
 ## Context
 
-Clawdis already has:
+Hassoon already has:
 - A **gateway heartbeat runner** that runs the agent with `HEARTBEAT` and suppresses `HEARTBEAT_OK` (`src/infra/heartbeat-runner.ts`).
 - A lightweight, in-memory **system event queue** (`enqueueSystemEvent`) that is injected into the next **main session** turn (`drainSystemEvents` in `src/auto-reply/reply.ts`).
 - A WebSocket **Gateway** daemon that is intended to be always-on (`docs/gateway.md`).
 
-This RFC adds a small “cron job system” so Clawd can schedule future work and reliably wake itself up:
+This RFC adds a small “cron job system” so Hassoon can schedule future work and reliably wake itself up:
 - **Delayed**: run on the *next* normal heartbeat tick
 - **Immediate**: run *now* (trigger a heartbeat immediately)
 - **Isolated jobs**: optionally run in their own session that does not pollute the main session and can run concurrently (within configured limits).
@@ -31,7 +31,7 @@ This RFC adds a small “cron job system” so Clawd can schedule future work an
   - `sessionTarget: "isolated"`: run an agent turn in a dedicated session key (job session), optionally delivering a message and/or posting a summary back to main.
 - Expose a stable control surface:
   - **Gateway methods** (`cron.*`, `wake`) for programmatic usage (mac app, CLI, agents).
-  - **CLI commands** (`clawdis cron ...`) to add/remove/edit/list and to debug `run`.
+  - **CLI commands** (`hassoon cron ...`) to add/remove/edit/list and to debug `run`.
 - Produce clear, structured **logs** for job lifecycle and execution outcomes.
 
 ## Non-goals (v1)
@@ -90,13 +90,13 @@ Each job is a JSON object with stable keys (unknown keys ignored for forward com
 
 ## Storage location
 
-Cron persists everything under `~/.clawdis/cron/`:
-- Job store: `~/.clawdis/cron/jobs.json`
-- Run history: `~/.clawdis/cron/runs/<jobId>.jsonl`
+Cron persists everything under `~/.hassoon/cron/`:
+- Job store: `~/.hassoon/cron/jobs.json`
+- Run history: `~/.hassoon/cron/runs/<jobId>.jsonl`
 
 You can override the job store path via `cron.store` in config.
 
-The scheduler should never require additional configuration for the base directory (Clawdis already treats `~/.clawdis` as fixed).
+The scheduler should never require additional configuration for the base directory (Hassoon already treats `~/.hassoon` as fixed).
 
 ## Enabling
 
@@ -109,13 +109,13 @@ To disable it, set:
   cron: {
     enabled: false,
     // optional:
-    store: "~/.clawdis/cron/jobs.json",
+    store: "~/.hassoon/cron/jobs.json",
     maxConcurrentRuns: 1
   }
 }
 ```
 
-You can also disable scheduling via the environment variable `CLAWDIS_SKIP_CRON=1`.
+You can also disable scheduling via the environment variable `HASSOON_SKIP_CRON=1`.
 
 ## Scheduler design
 
@@ -180,7 +180,7 @@ When due:
 
 ### “Run in parallel to main”
 
-Clawdis currently serializes command execution through a global in-process queue (`src/process/command-queue.ts`) to avoid collisions.
+Hassoon currently serializes command execution through a global in-process queue (`src/process/command-queue.ts`) to avoid collisions.
 
 To support isolated cron jobs running “in parallel”, we should introduce **lanes** (keyed queues) plus a global concurrency cap:
 - Lane `"main"`: inbound auto-replies + main heartbeat.
@@ -253,8 +253,8 @@ The Gateway should broadcast a `cron` event for UI/debug:
 
 Add a `cron` command group (all commands should also support `--json` where sensible):
 
-- `clawdis cron list [--json] [--all]`
-- `clawdis cron add ...`
+- `hassoon cron list [--json] [--all]`
+- `hassoon cron add ...`
   - schedule flags:
     - `--at <iso8601|ms|relative>` (one-shot)
     - `--every <duration>` (e.g. `10m`, `1h`)
@@ -266,15 +266,15 @@ Add a `cron` command group (all commands should also support `--json` where sens
     - `--system-event "<text>"`
     - `--message "<agent message>" [--deliver] [--channel last|whatsapp|telegram|discord|signal|imessage] [--to <dest>]`
 
-- `clawdis cron edit <id> ...` (patch-by-flags, non-interactive)
-- `clawdis cron rm <id>`
-- `clawdis cron enable <id>` / `clawdis cron disable <id>`
-- `clawdis cron run <id> [--force]` (debug)
-- `clawdis cron runs --id <id> [--limit <n>]` (run history)
-- `clawdis cron status` (scheduler enabled + next wake)
+- `hassoon cron edit <id> ...` (patch-by-flags, non-interactive)
+- `hassoon cron rm <id>`
+- `hassoon cron enable <id>` / `hassoon cron disable <id>`
+- `hassoon cron run <id> [--force]` (debug)
+- `hassoon cron runs --id <id> [--limit <n>]` (run history)
+- `hassoon cron status` (scheduler enabled + next wake)
 
 Additionally:
-- `clawdis wake --mode now|next-heartbeat --text "<text>"` as a thin wrapper around `wake` for agents to call.
+- `hassoon wake --mode now|next-heartbeat --text "<text>"` as a thin wrapper around `wake` for agents to call.
 
 ## Examples
 
@@ -283,7 +283,7 @@ Additionally:
 One-shot reminder that targets the main session and triggers a heartbeat immediately at the scheduled time:
 
 ```bash
-clawdis cron add \
+hassoon cron add \
   --at "2025-12-14T07:00:00-08:00" \
   --session main \
   --wake now \
@@ -295,7 +295,7 @@ clawdis cron add \
 Daily at 07:00 in a specific timezone (preferred over “every 24h” to avoid DST drift):
 
 ```bash
-clawdis cron add \
+hassoon cron add \
   --cron "0 7 * * *" \
   --tz "America/Los_Angeles" \
   --session isolated \
@@ -310,7 +310,7 @@ clawdis cron add \
 Every Wednesday at 09:00:
 
 ```bash
-clawdis cron add \
+hassoon cron add \
   --cron "0 9 * * 3" \
   --tz "America/Los_Angeles" \
   --session isolated \
@@ -325,7 +325,7 @@ clawdis cron add \
 Enqueue a note for the main session but let the existing heartbeat cadence pick it up:
 
 ```bash
-clawdis wake --mode next-heartbeat --text "Next heartbeat: check battery + upcoming meetings."
+hassoon wake --mode next-heartbeat --text "Next heartbeat: check battery + upcoming meetings."
 ```
 
 ## Logging & observability
@@ -345,7 +345,7 @@ Suggested log events:
 - `cron: job started` (jobId, scheduleKind, sessionTarget, wakeMode)
 - `cron: job finished` (status, durationMs, nextRunAtMs)
 - When `cron.enabled` is false, the Gateway logs `cron: disabled` and jobs will not run automatically (the CLI warns on `cron add`/`cron edit`).
-- Use `clawdis cron status` to confirm the scheduler is enabled and see the next wake time.
+- Use `hassoon cron status` to confirm the scheduler is enabled and see the next wake time.
 
 ## Safety & security
 
@@ -363,7 +363,7 @@ Suggested log events:
   - lane concurrency: main vs cron overlap is bounded
   - “wake now” coalescing and pending behavior when provider not ready
 - Integration tests:
-  - start Gateway with `CLAWDIS_SKIP_PROVIDERS=1`, add jobs, list/edit/remove
+  - start Gateway with `HASSOON_SKIP_PROVIDERS=1`, add jobs, list/edit/remove
   - simulate due jobs and assert `enqueueSystemEvent` called + cron events broadcast
 
 ## Rollout plan

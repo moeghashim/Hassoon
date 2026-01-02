@@ -24,7 +24,7 @@ People who message you can:
 
 ### The `find ~` Incident 🦞
 
-On Day 1, a friendly tester asked Clawd to run `find ~` and share the output. Clawd happily dumped the entire home directory structure to a group chat.
+On Day 1, a friendly tester asked Hassoon to run `find ~` and share the output. Hassoon happily dumped the entire home directory structure to a group chat.
 
 **Lesson:** Even "innocent" requests can leak sensitive info. Directory structures reveal project names, tool configs, and system layout.
 
@@ -57,7 +57,7 @@ Only allow specific phone numbers to trigger your AI. Never use `["*"]` in produ
   "routing": {
     "groupChat": {
       "requireMention": true,
-      "mentionPatterns": ["@clawd", "@mybot"]
+      "mentionPatterns": ["@hassoon", "@mybot"]
     }
   }
 }
@@ -80,18 +80,18 @@ We're considering a `readOnlyMode` flag that prevents the AI from:
 
 ## Container Isolation (Recommended)
 
-For maximum security, run CLAWDIS in a container with limited access:
+For maximum security, run HASSOON in a container with limited access:
 
 ```yaml
 # docker-compose.yml
 services:
-  clawdis:
+  hassoon:
     build: .
     volumes:
-      - ./clawd-sandbox:/home/clawd  # Limited filesystem
-      - /tmp/clawdis:/tmp/clawdis    # Logs
+      - ./hassoon-sandbox:/home/hassoon  # Limited filesystem
+      - /tmp/hassoon:/tmp/hassoon    # Logs
     environment:
-      - CLAWDIS_SANDBOX=true
+      - HASSOON_SANDBOX=true
     network_mode: bridge  # Limited network
 ```
 
@@ -118,9 +118,9 @@ Include security guidelines in your agent's system prompt:
 
 If your AI does something bad:
 
-1. **Stop it:** stop the macOS app (if it’s supervising the Gateway) or terminate your `clawdis gateway` process
-2. **Check logs:** `/tmp/clawdis/clawdis-YYYY-MM-DD.log` (or your configured `logging.file`)
-3. **Review session:** Check `~/.clawdis/sessions/` for what happened
+1. **Stop it:** stop the macOS app (if it’s supervising the Gateway) or terminate your `hassoon gateway` process
+2. **Check logs:** `/tmp/hassoon/hassoon-YYYY-MM-DD.log` (or your configured `logging.file`)
+3. **Review session:** Check `~/.hassoon/sessions/` for what happened
 4. **Rotate secrets:** If credentials were exposed
 5. **Update rules:** Add to your security prompt
 
@@ -130,7 +130,7 @@ If your AI does something bad:
 Owner (Peter)
   │ Full trust
   ▼
-AI (Clawd)
+AI (Hassoon)
   │ Trust but verify
   ▼
 Friends in allowlist
@@ -145,7 +145,7 @@ Mario asking for find ~
 
 ## Reporting Security Issues
 
-Found a vulnerability in CLAWDIS? Please report responsibly:
+Found a vulnerability in HASSOON? Please report responsibly:
 
 1. Email: security@[redacted].com
 2. Don't post publicly until fixed

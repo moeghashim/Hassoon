@@ -27,7 +27,7 @@ vi.mock("./send.js", () => ({
 }));
 
 vi.mock("../config/sessions.js", () => ({
-  resolveStorePath: vi.fn(() => "/tmp/clawdis-sessions.json"),
+  resolveStorePath: vi.fn(() => "/tmp/hassoon-sessions.json"),
   updateLastRoute: (...args: unknown[]) => updateLastRouteMock(...args),
 }));
 
@@ -62,7 +62,7 @@ beforeEach(() => {
     imessage: {},
     session: { mainKey: "main" },
     routing: {
-      groupChat: { mentionPatterns: ["@clawd"], requireMention: true },
+      groupChat: { mentionPatterns: ["@hassoon"], requireMention: true },
       allowFrom: [],
     },
   };
@@ -119,7 +119,7 @@ describe("monitorIMessageProvider", () => {
           chat_id: 42,
           sender: "+15550002222",
           is_from_me: false,
-          text: "@clawd ping",
+          text: "@hassoon ping",
           is_group: true,
           chat_name: "Lobster Squad",
           participants: ["+1555", "+1556"],
@@ -154,7 +154,7 @@ describe("monitorIMessageProvider", () => {
           chat_id: 202,
           sender: "+15550003333",
           is_from_me: false,
-          text: "@clawd hi",
+          text: "@hassoon hi",
           is_group: true,
         },
       },

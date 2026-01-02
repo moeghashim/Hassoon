@@ -57,11 +57,11 @@ describe("sessions", () => {
       buildGroupDisplayName({
         surface: "discord",
         room: "#general",
-        space: "friends-of-clawd",
+        space: "friends-of-hassoon",
         id: "123",
         key: "discord:group:123",
       }),
-    ).toBe("discord:friends-of-clawd#general");
+    ).toBe("discord:friends-of-hassoon#general");
   });
 
   it("collapses direct chats to main by default", () => {
@@ -95,7 +95,7 @@ describe("sessions", () => {
   });
 
   it("updateLastRoute persists channel and target", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-sessions-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-sessions-"));
     const storePath = path.join(dir, "sessions.json");
     await fs.writeFile(
       storePath,

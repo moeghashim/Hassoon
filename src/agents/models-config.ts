@@ -1,13 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { type ClawdisConfig, loadConfig } from "../config/config.js";
+import { type HassoonConfig, loadConfig } from "../config/config.js";
 import {
-  ensureClawdisAgentEnv,
-  resolveClawdisAgentDir,
+  ensureHassoonAgentEnv,
+  resolveHassoonAgentDir,
 } from "./agent-paths.js";
 
-type ModelsConfig = NonNullable<ClawdisConfig["models"]>;
+type ModelsConfig = NonNullable<HassoonConfig["models"]>;
 
 const DEFAULT_MODE: NonNullable<ModelsConfig["mode"]> = "merge";
 
@@ -24,17 +24,17 @@ async function readJson(pathname: string): Promise<unknown> {
   }
 }
 
-export async function ensureClawdisModelsJson(
-  config?: ClawdisConfig,
+export async function ensureHassoonModelsJson(
+  config?: HassoonConfig,
 ): Promise<{ agentDir: string; wrote: boolean }> {
   const cfg = config ?? loadConfig();
   const providers = cfg.models?.providers;
   if (!providers || Object.keys(providers).length === 0) {
-    return { agentDir: resolveClawdisAgentDir(), wrote: false };
+    return { agentDir: resolveHassoonAgentDir(), wrote: false };
   }
 
   const mode = cfg.models?.mode ?? DEFAULT_MODE;
-  const agentDir = ensureClawdisAgentEnv();
+  const agentDir = ensureHassoonAgentEnv();
   const targetPath = path.join(agentDir, "models.json");
 
   let mergedProviders = providers;

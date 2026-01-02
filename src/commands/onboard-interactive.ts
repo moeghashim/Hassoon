@@ -11,9 +11,9 @@ import {
 } from "@clack/prompts";
 import { loginAnthropic, type OAuthCredentials } from "@mariozechner/pi-ai";
 
-import type { ClawdisConfig } from "../config/config.js";
+import type { HassoonConfig } from "../config/config.js";
 import {
-  CONFIG_PATH_CLAWDIS,
+  CONFIG_PATH_HASSOON,
   readConfigFileSnapshot,
   writeConfigFile,
 } from "../config/config.js";
@@ -58,10 +58,10 @@ export async function runInteractiveOnboarding(
   runtime: RuntimeEnv = defaultRuntime,
 ) {
   printWizardHeader(runtime);
-  intro("Clawdis onboarding");
+  intro("Hassoon onboarding");
 
   const snapshot = await readConfigFileSnapshot();
-  let baseConfig: ClawdisConfig = snapshot.valid ? snapshot.config : {};
+  let baseConfig: HassoonConfig = snapshot.valid ? snapshot.config : {};
 
   if (snapshot.exists) {
     const title = snapshot.valid
@@ -118,10 +118,10 @@ export async function runInteractiveOnboarding(
   const localUrl = "ws://127.0.0.1:18789";
   const localProbe = await probeGatewayReachable({
     url: localUrl,
-    token: process.env.CLAWDIS_GATEWAY_TOKEN,
+    token: process.env.HASSOON_GATEWAY_TOKEN,
     password:
       baseConfig.gateway?.auth?.password ??
-      process.env.CLAWDIS_GATEWAY_PASSWORD,
+      process.env.HASSOON_GATEWAY_PASSWORD,
   });
   const remoteUrl = baseConfig.gateway?.remote?.url?.trim() ?? "";
   const remoteProbe = remoteUrl
@@ -162,7 +162,7 @@ export async function runInteractiveOnboarding(
     let nextConfig = await promptRemoteGatewayConfig(baseConfig, runtime);
     nextConfig = applyWizardMetadata(nextConfig, { command: "onboard", mode });
     await writeConfigFile(nextConfig);
-    runtime.log(`Updated ${CONFIG_PATH_CLAWDIS}`);
+    runtime.log(`Updated ${CONFIG_PATH_HASSOON}`);
     outro("Remote gateway configured.");
     return;
   }
@@ -181,7 +181,7 @@ export async function runInteractiveOnboarding(
     workspaceInput.trim() || DEFAULT_WORKSPACE,
   );
 
-  let nextConfig: ClawdisConfig = {
+  let nextConfig: HassoonConfig = {
     ...baseConfig,
     agent: {
       ...baseConfig.agent,
@@ -411,7 +411,7 @@ export async function runInteractiveOnboarding(
   });
 
   await writeConfigFile(nextConfig);
-  runtime.log(`Updated ${CONFIG_PATH_CLAWDIS}`);
+  runtime.log(`Updated ${CONFIG_PATH_HASSOON}`);
   await ensureWorkspaceAndSessions(workspaceDir, runtime);
 
   nextConfig = await setupSkills(nextConfig, workspaceDir, runtime);
@@ -459,8 +459,8 @@ export async function runInteractiveOnboarding(
         await resolveGatewayProgramArguments({ port, dev: devMode });
       const environment: Record<string, string | undefined> = {
         PATH: process.env.PATH,
-        CLAWDIS_GATEWAY_TOKEN: gatewayToken,
-        CLAWDIS_LAUNCHD_LABEL:
+        HASSOON_GATEWAY_TOKEN: gatewayToken,
+        HASSOON_LAUNCHD_LABEL:
           process.platform === "darwin"
             ? GATEWAY_LAUNCH_AGENT_LABEL
             : undefined,

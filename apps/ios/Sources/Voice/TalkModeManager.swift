@@ -1,5 +1,5 @@
 import AVFAudio
-import ClawdisKit
+import HassoonKit
 import Foundation
 import Observation
 import OSLog
@@ -47,7 +47,7 @@ final class TalkModeManager: NSObject {
 
     private var chatSubscribedSessionKeys = Set<String>()
 
-    private let logger = Logger(subsystem: "com.steipete.clawdis", category: "TalkMode")
+    private let logger = Logger(subsystem: "com.moeghashim.hassoon", category: "TalkMode")
 
     func attachBridge(_ bridge: BridgeSession) {
         self.bridge = bridge

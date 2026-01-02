@@ -1,19 +1,19 @@
 ---
-summary: "Gmail Pub/Sub push wired into Clawdis webhooks via gogcli"
+summary: "Gmail Pub/Sub push wired into Hassoon webhooks via gogcli"
 read_when:
-  - Wiring Gmail inbox triggers to Clawdis
+  - Wiring Gmail inbox triggers to Hassoon
   - Setting up Pub/Sub push for agent wake
 ---
 
-# Gmail Pub/Sub -> Clawdis
+# Gmail Pub/Sub -> Hassoon
 
-Goal: Gmail watch -> Pub/Sub push -> `gog gmail watch serve` -> Clawdis webhook.
+Goal: Gmail watch -> Pub/Sub push -> `gog gmail watch serve` -> Hassoon webhook.
 
 ## Prereqs
 
 - `gcloud` installed and logged in.
 - `gog` (gogcli) installed and authorized for the Gmail account.
-- Clawdis hooks enabled (see `docs/webhook.md`).
+- Hassoon hooks enabled (see `docs/webhook.md`).
 - `tailscale` logged in if you want a public HTTPS endpoint via Funnel.
 
 Example hook config (enable Gmail preset mapping):
@@ -22,7 +22,7 @@ Example hook config (enable Gmail preset mapping):
 {
   hooks: {
     enabled: true,
-    token: "CLAWDIS_HOOK_TOKEN",
+    token: "HASSOON_HOOK_TOKEN",
     path: "/hooks",
     presets: ["gmail"]
   }
@@ -34,19 +34,19 @@ under `hooks.transformsDir` (see `docs/webhook.md`).
 
 ## Wizard (recommended)
 
-Use the Clawdis helper to wire everything together (installs deps on macOS via brew):
+Use the Hassoon helper to wire everything together (installs deps on macOS via brew):
 
 ```bash
-clawdis hooks gmail setup \
-  --account clawdbot@gmail.com
+hassoon hooks gmail setup \
+  --account hassoonbot@gmail.com
 ```
 
 Defaults:
 - Uses Tailscale Funnel for the public push endpoint.
-- Writes `hooks.gmail` config for `clawdis hooks gmail run`.
+- Writes `hooks.gmail` config for `hassoon hooks gmail run`.
 - Enables the Gmail hook preset (`hooks.presets: ["gmail"]`).
 
-Path note: when `tailscale.mode` is enabled, Clawdis automatically sets
+Path note: when `tailscale.mode` is enabled, Hassoon automatically sets
 `hooks.gmail.serve.path` to `/` and keeps the public path at
 `hooks.gmail.tailscale.path` (default `/gmail-pubsub`) because Tailscale
 strips the set-path prefix before proxying.
@@ -59,7 +59,7 @@ via Homebrew; on Linux install them manually first.
 Run the daemon (starts `gog gmail watch serve` + auto-renew):
 
 ```bash
-clawdis hooks gmail run
+hassoon hooks gmail run
 ```
 
 ## One-time setup
@@ -97,7 +97,7 @@ gcloud pubsub topics add-iam-policy-binding gog-gmail-watch \
 
 ```bash
 gog gmail watch start \
-  --account clawdbot@gmail.com \
+  --account hassoonbot@gmail.com \
   --label INBOX \
   --topic projects/<project-id>/topics/gog-gmail-watch
 ```
@@ -110,23 +110,23 @@ Local example (shared token auth):
 
 ```bash
 gog gmail watch serve \
-  --account clawdbot@gmail.com \
+  --account hassoonbot@gmail.com \
   --bind 127.0.0.1 \
   --port 8788 \
   --path /gmail-pubsub \
   --token <shared> \
   --hook-url http://127.0.0.1:18789/hooks/gmail \
-  --hook-token CLAWDIS_HOOK_TOKEN \
+  --hook-token HASSOON_HOOK_TOKEN \
   --include-body \
   --max-bytes 20000
 ```
 
 Notes:
 - `--token` protects the push endpoint (`x-gog-token` or `?token=`).
-- `--hook-url` points to Clawdis `/hooks/gmail` (mapped; isolated run + summary to main).
-- `--include-body` and `--max-bytes` control the body snippet sent to Clawdis.
+- `--hook-url` points to Hassoon `/hooks/gmail` (mapped; isolated run + summary to main).
+- `--include-body` and `--max-bytes` control the body snippet sent to Hassoon.
 
-Recommended: `clawdis hooks gmail run` wraps the same flow and auto-renews the watch.
+Recommended: `hassoon hooks gmail run` wraps the same flow and auto-renews the watch.
 
 ## Expose the handler (dev)
 
@@ -156,8 +156,8 @@ Send a message to the watched inbox:
 
 ```bash
 gog gmail send \
-  --account clawdbot@gmail.com \
-  --to clawdbot@gmail.com \
+  --account hassoonbot@gmail.com \
+  --to hassoonbot@gmail.com \
   --subject "watch test" \
   --body "ping"
 ```
@@ -165,8 +165,8 @@ gog gmail send \
 Check watch state and history:
 
 ```bash
-gog gmail watch status --account clawdbot@gmail.com
-gog gmail history --account clawdbot@gmail.com --since <historyId>
+gog gmail watch status --account hassoonbot@gmail.com
+gog gmail history --account hassoonbot@gmail.com --since <historyId>
 ```
 
 ## Troubleshooting
@@ -178,7 +178,7 @@ gog gmail history --account clawdbot@gmail.com --since <historyId>
 ## Cleanup
 
 ```bash
-gog gmail watch stop --account clawdbot@gmail.com
+gog gmail watch stop --account hassoonbot@gmail.com
 gcloud pubsub subscriptions delete gog-gmail-watch-push
 gcloud pubsub topics delete gog-gmail-watch
 ```

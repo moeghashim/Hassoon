@@ -468,8 +468,8 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
         const groupDmAllowed = resolveGroupDmAllow({
           channels: groupDmChannels,
           channelId: interaction.channelId,
-          channelName,
-          channelSlug,
+          channelName: channelName ?? undefined,
+          channelSlug: channelSlug ?? undefined,
         });
         if (!groupDmAllowed) return;
       } else if (isDirectMessage) {
@@ -800,11 +800,11 @@ async function ensureSlashCommand(
     if (hasCommand) return;
     await appCommands.create({
       name: slashCommand.name,
-      description: "Ask Clawdis a question",
+      description: "Ask Hassoon a question",
       options: [
         {
           name: "prompt",
-          description: "What should Clawdis help with?",
+          description: "What should Hassoon help with?",
           type: ApplicationCommandOptionType.String,
           required: true,
         },
@@ -832,7 +832,7 @@ function resolveSlashCommandConfig(
 ): Required<DiscordSlashCommandConfig> {
   return {
     enabled: raw ? raw.enabled !== false : false,
-    name: raw?.name?.trim() || "clawd",
+    name: raw?.name?.trim() || "hassoon",
     sessionPrefix: raw?.sessionPrefix?.trim() || "discord:slash",
     ephemeral: raw?.ephemeral !== false,
   };

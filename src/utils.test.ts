@@ -38,7 +38,7 @@ describe("withWhatsAppPrefix", () => {
 describe("ensureDir", () => {
   it("creates nested directory", async () => {
     const tmp = await fs.promises.mkdtemp(
-      path.join(os.tmpdir(), "clawdis-test-"),
+      path.join(os.tmpdir(), "hassoon-test-"),
     );
     const target = path.join(tmp, "nested", "dir");
     await ensureDir(target);
@@ -105,8 +105,8 @@ describe("resolveUserPath", () => {
   });
 
   it("expands ~/ to home dir", () => {
-    expect(resolveUserPath("~/clawd")).toBe(
-      path.resolve(os.homedir(), "clawd"),
+    expect(resolveUserPath("~/hassoon")).toBe(
+      path.resolve(os.homedir(), "hassoon"),
     );
   });
 

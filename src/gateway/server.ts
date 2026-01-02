@@ -44,14 +44,14 @@ import { agentCommand } from "../commands/agent.js";
 import { getHealthSnapshot, type HealthSummary } from "../commands/health.js";
 import { getStatusSummary } from "../commands/status.js";
 import {
-  type ClawdisConfig,
-  CONFIG_PATH_CLAWDIS,
+  type HassoonConfig,
+  CONFIG_PATH_HASSOON,
   isNixMode,
   loadConfig,
   migrateLegacyConfig,
   parseConfigJson5,
   readConfigFileSnapshot,
-  STATE_DIR_CLAWDIS,
+  STATE_DIR_HASSOON,
   validateConfigObject,
   writeConfigFile,
 } from "../config/config.js";
@@ -110,7 +110,7 @@ import {
   requestNodePairing,
   verifyNodeToken,
 } from "../infra/node-pairing.js";
-import { ensureClawdisCliOnPath } from "../infra/path-env.js";
+import { ensureHassoonCliOnPath } from "../infra/path-env.js";
 import {
   enqueueSystemEvent,
   isSystemEventContextChanged,
@@ -175,7 +175,7 @@ import {
   resolveHookMappings,
 } from "./hooks-mapping.js";
 
-ensureClawdisCliOnPath();
+ensureHassoonCliOnPath();
 
 const DEFAULT_HOOKS_PATH = "/hooks";
 const DEFAULT_HOOKS_MAX_BODY_BYTES = 256 * 1024;
@@ -187,7 +187,7 @@ type HooksConfigResolved = {
   mappings: HookMappingResolved[];
 };
 
-function resolveHooksConfig(cfg: ClawdisConfig): HooksConfigResolved | null {
+function resolveHooksConfig(cfg: HassoonConfig): HooksConfigResolved | null {
   if (cfg.hooks?.enabled !== true) return null;
   const token = cfg.hooks?.token?.trim();
   if (!token) {
@@ -223,8 +223,8 @@ function extractHookToken(req: IncomingMessage, url: URL): string | undefined {
     if (token) return token;
   }
   const headerToken =
-    typeof req.headers["x-clawdis-token"] === "string"
-      ? req.headers["x-clawdis-token"].trim()
+    typeof req.headers["x-hassoon-token"] === "string"
+      ? req.headers["x-hassoon-token"].trim()
       : "";
   if (headerToken) return headerToken;
   const queryToken = url.searchParams.get("token");
@@ -308,7 +308,7 @@ const signalRuntimeEnv = runtimeForLogger(logSignal);
 const imessageRuntimeEnv = runtimeForLogger(logIMessage);
 
 function resolveBonjourCliPath(): string | undefined {
-  const envPath = process.env.CLAWDIS_CLI_PATH?.trim();
+  const envPath = process.env.HASSOON_CLI_PATH?.trim();
   if (envPath) return envPath;
 
   const isFile = (candidate: string) => {
@@ -320,7 +320,7 @@ function resolveBonjourCliPath(): string | undefined {
   };
 
   const execDir = path.dirname(process.execPath);
-  const siblingCli = path.join(execDir, "clawdis");
+  const siblingCli = path.join(execDir, "hassoon");
   if (isFile(siblingCli)) return siblingCli;
 
   const argvPath = process.argv[1];
@@ -332,7 +332,7 @@ function resolveBonjourCliPath(): string | undefined {
   const cwd = process.cwd();
   const distCli = path.join(cwd, "dist", "index.js");
   if (isFile(distCli)) return distCli;
-  const binCli = path.join(cwd, "bin", "clawdis.js");
+  const binCli = path.join(cwd, "bin", "hassoon.js");
   if (isFile(binCli)) return binCli;
 
   return undefined;
@@ -341,10 +341,10 @@ function resolveBonjourCliPath(): string | undefined {
 let stopBrowserControlServerIfStarted: (() => Promise<void>) | null = null;
 
 async function startBrowserControlServerIfEnabled(): Promise<void> {
-  if (process.env.CLAWDIS_SKIP_BROWSER_CONTROL_SERVER === "1") return;
+  if (process.env.HASSOON_SKIP_BROWSER_CONTROL_SERVER === "1") return;
   // Lazy import: keeps startup fast, but still bundles for the embedded
   // gateway (bun --compile) via the static specifier path.
-  const override = process.env.CLAWDIS_BROWSER_CONTROL_MODULE?.trim();
+  const override = process.env.HASSOON_BROWSER_CONTROL_MODULE?.trim();
   const mod = override
     ? await import(override)
     : await import("../browser/server.js");
@@ -430,13 +430,13 @@ type Client = {
 
 function formatBonjourInstanceName(displayName: string) {
   const trimmed = displayName.trim();
-  if (!trimmed) return "Clawdis";
-  if (/clawdis/i.test(trimmed)) return trimmed;
-  return `${trimmed} (Clawdis)`;
+  if (!trimmed) return "Hassoon";
+  if (/hassoon/i.test(trimmed)) return trimmed;
+  return `${trimmed} (Hassoon)`;
 }
 
 async function resolveTailnetDnsHint(): Promise<string | undefined> {
-  const envRaw = process.env.CLAWDIS_TAILNET_DNS?.trim();
+  const envRaw = process.env.HASSOON_TAILNET_DNS?.trim();
   const env = envRaw && envRaw.length > 0 ? envRaw.replace(/\.$/, "") : "";
   if (env) return env;
 
@@ -637,8 +637,8 @@ function buildSnapshot(): Snapshot {
     stateVersion: { presence: presenceVersion, health: healthVersion },
     uptimeMs,
     // Surface resolved paths so UIs can display the true config location.
-    configPath: CONFIG_PATH_CLAWDIS,
-    stateDir: STATE_DIR_CLAWDIS,
+    configPath: CONFIG_PATH_HASSOON,
+    stateDir: STATE_DIR_HASSOON,
   };
 }
 
@@ -821,7 +821,7 @@ function resolveSessionTranscriptCandidates(
     candidates.push(path.join(dir, `${sessionId}.jsonl`));
   }
   candidates.push(
-    path.join(os.homedir(), ".clawdis", "sessions", `${sessionId}.jsonl`),
+    path.join(os.homedir(), ".hassoon", "sessions", `${sessionId}.jsonl`),
   );
   return candidates;
 }
@@ -903,7 +903,7 @@ function parseGroupKey(
   return null;
 }
 
-function getSessionDefaults(cfg: ClawdisConfig): GatewaySessionsDefaults {
+function getSessionDefaults(cfg: HassoonConfig): GatewaySessionsDefaults {
   const resolved = resolveConfiguredModelRef({
     cfg,
     defaultProvider: DEFAULT_PROVIDER,
@@ -920,7 +920,7 @@ function getSessionDefaults(cfg: ClawdisConfig): GatewaySessionsDefaults {
 }
 
 function listSessionsFromStore(params: {
-  cfg: ClawdisConfig;
+  cfg: HassoonConfig;
   storePath: string;
   store: Record<string, SessionEntry>;
   opts: SessionsListParams;
@@ -1334,7 +1334,7 @@ export async function startGatewayServer(
     );
     if (!migrated) {
       throw new Error(
-        "Legacy config entries detected but auto-migration failed. Run \"clawdis doctor\" to migrate.",
+        "Legacy config entries detected but auto-migration failed. Run \"hassoon doctor\" to migrate.",
       );
     }
     await writeConfigFile(migrated);
@@ -1371,9 +1371,9 @@ export async function startGatewayServer(
   };
   const tailscaleMode = tailscaleConfig.mode ?? "off";
   const token =
-    authConfig.token ?? process.env.CLAWDIS_GATEWAY_TOKEN ?? undefined;
+    authConfig.token ?? process.env.HASSOON_GATEWAY_TOKEN ?? undefined;
   const password =
-    authConfig.password ?? process.env.CLAWDIS_GATEWAY_PASSWORD ?? undefined;
+    authConfig.password ?? process.env.HASSOON_GATEWAY_PASSWORD ?? undefined;
   const authMode: ResolvedGatewayAuth["mode"] =
     authConfig.mode ?? (password ? "password" : token ? "token" : "none");
   const allowTailscale =
@@ -1387,12 +1387,12 @@ export async function startGatewayServer(
   };
   const hooksConfig = resolveHooksConfig(cfgAtStart);
   const canvasHostEnabled =
-    process.env.CLAWDIS_SKIP_CANVAS_HOST !== "1" &&
+    process.env.HASSOON_SKIP_CANVAS_HOST !== "1" &&
     cfgAtStart.canvasHost?.enabled !== false;
   assertGatewayAuthConfigured(resolvedAuth);
   if (tailscaleMode === "funnel" && authMode !== "password") {
     throw new Error(
-      "tailscale funnel requires gateway auth mode=password (set gateway.auth.password or CLAWDIS_GATEWAY_PASSWORD)",
+      "tailscale funnel requires gateway auth mode=password (set gateway.auth.password or HASSOON_GATEWAY_PASSWORD)",
     );
   }
   if (tailscaleMode !== "off" && !isLoopbackHost(bindHost)) {
@@ -1402,7 +1402,7 @@ export async function startGatewayServer(
   }
   if (!isLoopbackHost(bindHost) && authMode === "none") {
     throw new Error(
-      `refusing to bind gateway to ${bindHost}:${port} without auth (set gateway.auth or CLAWDIS_GATEWAY_TOKEN)`,
+      `refusing to bind gateway to ${bindHost}:${port} without auth (set gateway.auth or HASSOON_GATEWAY_TOKEN)`,
     );
   }
 
@@ -1970,7 +1970,7 @@ export async function startGatewayServer(
   });
   const deps = createDefaultDeps();
   const cronEnabled =
-    process.env.CLAWDIS_SKIP_CRON !== "1" && cfgAtStart.cron?.enabled !== false;
+    process.env.HASSOON_SKIP_CRON !== "1" && cfgAtStart.cron?.enabled !== false;
   const cron = new CronService({
     storePath: cronStorePath,
     cronEnabled,
@@ -2540,7 +2540,7 @@ export async function startGatewayServer(
   const bridgeEnabled = (() => {
     if (cfgAtStart.bridge?.enabled !== undefined)
       return cfgAtStart.bridge.enabled === true;
-    return process.env.CLAWDIS_BRIDGE_ENABLED !== "0";
+    return process.env.HASSOON_BRIDGE_ENABLED !== "0";
   })();
 
   const bridgePort = (() => {
@@ -2550,8 +2550,8 @@ export async function startGatewayServer(
     ) {
       return cfgAtStart.bridge.port;
     }
-    if (process.env.CLAWDIS_BRIDGE_PORT !== undefined) {
-      const parsed = Number.parseInt(process.env.CLAWDIS_BRIDGE_PORT, 10);
+    if (process.env.HASSOON_BRIDGE_PORT !== undefined) {
+      const parsed = Number.parseInt(process.env.HASSOON_BRIDGE_PORT, 10);
       return Number.isFinite(parsed) && parsed > 0 ? parsed : 18790;
     }
     return 18790;
@@ -2560,7 +2560,7 @@ export async function startGatewayServer(
   const bridgeHost = (() => {
     // Back-compat: allow an env var override when no bind policy is configured.
     if (cfgAtStart.bridge?.bind === undefined) {
-      const env = process.env.CLAWDIS_BRIDGE_HOST?.trim();
+      const env = process.env.HASSOON_BRIDGE_HOST?.trim();
       if (env) return env;
     }
 
@@ -2800,7 +2800,7 @@ export async function startGatewayServer(
             ok: true,
             payloadJSON: JSON.stringify({
               ok: true,
-              path: CONFIG_PATH_CLAWDIS,
+              path: CONFIG_PATH_HASSOON,
               config: validated.config,
             }),
           };
@@ -3747,7 +3747,7 @@ export async function startGatewayServer(
   const tailnetDns = await resolveTailnetDnsHint();
 
   try {
-    const sshPortEnv = process.env.CLAWDIS_SSH_PORT?.trim();
+    const sshPortEnv = process.env.HASSOON_SSH_PORT?.trim();
     const sshPortParsed = sshPortEnv ? Number.parseInt(sshPortEnv, 10) : NaN;
     const sshPort =
       Number.isFinite(sshPortParsed) && sshPortParsed > 0
@@ -4236,7 +4236,7 @@ export async function startGatewayServer(
             protocol: PROTOCOL_VERSION,
             server: {
               version:
-                process.env.CLAWDIS_VERSION ??
+                process.env.HASSOON_VERSION ??
                 process.env.npm_package_version ??
                 "dev",
               commit: process.env.GIT_COMMIT,
@@ -5100,7 +5100,7 @@ export async function startGatewayServer(
                 if (nextTelegram) {
                   delete nextTelegram.botToken;
                 }
-                const nextCfg = { ...cfg } as ClawdisConfig;
+                const nextCfg = { ...cfg } as HassoonConfig;
                 if (nextTelegram && Object.keys(nextTelegram).length > 0) {
                   nextCfg.telegram = nextTelegram;
                 } else {
@@ -5213,7 +5213,7 @@ export async function startGatewayServer(
                 true,
                 {
                   ok: true,
-                  path: CONFIG_PATH_CLAWDIS,
+                  path: CONFIG_PATH_HASSOON,
                   config: validated.config,
                 },
                 undefined,
@@ -5363,7 +5363,7 @@ export async function startGatewayServer(
               }
               entries[p.skillKey] = current;
               skills.entries = entries;
-              const nextConfig: ClawdisConfig = {
+              const nextConfig: HassoonConfig = {
                 ...cfg,
                 skills,
               };
@@ -6831,7 +6831,7 @@ export async function startGatewayServer(
     }
   }
 
-  // Start clawd browser control server (unless disabled via config).
+  // Start hassoon browser control server (unless disabled via config).
   try {
     await startBrowserControlServerIfEnabled();
   } catch (err) {
@@ -6839,15 +6839,15 @@ export async function startGatewayServer(
   }
 
   // Launch configured providers (WhatsApp Web, Discord, Telegram) so gateway replies via the
-  // surface the message came from. Tests can opt out via CLAWDIS_SKIP_PROVIDERS.
-  if (process.env.CLAWDIS_SKIP_PROVIDERS !== "1") {
+  // surface the message came from. Tests can opt out via HASSOON_SKIP_PROVIDERS.
+  if (process.env.HASSOON_SKIP_PROVIDERS !== "1") {
     try {
       await startProviders();
     } catch (err) {
       logProviders.error(`provider startup failed: ${String(err)}`);
     }
   } else {
-    logProviders.info("skipping provider start (CLAWDIS_SKIP_PROVIDERS=1)");
+    logProviders.info("skipping provider start (HASSOON_SKIP_PROVIDERS=1)");
   }
 
   return {

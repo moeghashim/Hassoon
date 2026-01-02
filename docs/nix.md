@@ -1,31 +1,31 @@
 ---
-summary: "Running Clawdis under Nix (config, state, and packaging expectations)"
+summary: "Running Hassoon under Nix (config, state, and packaging expectations)"
 read_when:
-  - Building Clawdis with Nix
+  - Building Hassoon with Nix
   - Debugging Nix-mode behavior
 ---
 # Nix mode
 
-Clawdis supports a **Nix mode** that makes configuration deterministic and disables auto-install flows.
+Hassoon supports a **Nix mode** that makes configuration deterministic and disables auto-install flows.
 Enable it by exporting:
 
 ```
-CLAWDIS_NIX_MODE=1
+HASSOON_NIX_MODE=1
 ```
 
 On macOS, the GUI app does not automatically inherit shell env vars. You can
 also enable Nix mode via defaults:
 
 ```
-defaults write com.steipete.clawdis clawdis.nixMode -bool true
+defaults write com.moeghashim.hassoon hassoon.nixMode -bool true
 ```
 
 ## Config + state paths
 
-Clawdis reads JSON5 config from `CLAWDIS_CONFIG_PATH` and stores mutable data in `CLAWDIS_STATE_DIR`.
+Hassoon reads JSON5 config from `HASSOON_CONFIG_PATH` and stores mutable data in `HASSOON_STATE_DIR`.
 
-- `CLAWDIS_STATE_DIR` (default: `~/.clawdis`)
-- `CLAWDIS_CONFIG_PATH` (default: `$CLAWDIS_STATE_DIR/clawdis.json`)
+- `HASSOON_STATE_DIR` (default: `~/.hassoon`)
+- `HASSOON_CONFIG_PATH` (default: `$HASSOON_STATE_DIR/hassoon.json`)
 
 When running under Nix, set these explicitly to Nix-managed locations so runtime state and config
 stay out of the immutable store.
@@ -41,7 +41,7 @@ stay out of the immutable store.
 The macOS packaging flow expects a stable Info.plist template at:
 
 ```
-apps/macos/Sources/Clawdis/Resources/Info.plist
+apps/macos/Sources/Hassoon/Resources/Info.plist
 ```
 
 `scripts/package-mac-app.sh` copies this template into the app bundle and patches dynamic fields

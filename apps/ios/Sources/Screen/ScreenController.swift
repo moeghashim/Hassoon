@@ -1,4 +1,4 @@
-import ClawdisKit
+import HassoonKit
 import Observation
 import SwiftUI
 import WebKit
@@ -13,7 +13,7 @@ final class ScreenController {
     var urlString: String = ""
     var errorText: String?
 
-    /// Callback invoked when a clawdis:// deep link is tapped in the canvas
+    /// Callback invoked when a hassoon:// deep link is tapped in the canvas
     var onDeepLink: ((URL) -> Void)?
 
     /// Callback invoked when the user clicks an A2UI action (e.g. button) inside the canvas web UI.
@@ -101,7 +101,7 @@ final class ScreenController {
         let js = """
         (() => {
           try {
-            const api = globalThis.__clawdis;
+            const api = globalThis.__hassoon;
             if (!api) return;
             if (typeof api.setDebugStatusEnabled === 'function') {
               api.setDebugStatusEnabled(\(enabled ? "true" : "false"));
@@ -124,7 +124,7 @@ final class ScreenController {
                 let res = try await self.eval(javaScript: """
                 (() => {
                   try {
-                    return !!globalThis.clawdisA2UI && typeof globalThis.clawdisA2UI.applyMessages === 'function';
+                    return !!globalThis.hassoonA2UI && typeof globalThis.hassoonA2UI.applyMessages === 'function';
                   } catch (_) { return false; }
                 })()
                 """)
@@ -184,7 +184,7 @@ final class ScreenController {
 
     func snapshotBase64(
         maxWidth: CGFloat? = nil,
-        format: ClawdisCanvasSnapshotFormat,
+        format: HassoonCanvasSnapshotFormat,
         quality: Double? = nil) async throws -> String
     {
         let config = WKSnapshotConfiguration()
@@ -229,7 +229,7 @@ final class ScreenController {
         subdirectory: String)
         -> URL?
     {
-        let bundle = ClawdisKitResources.bundle
+        let bundle = HassoonKitResources.bundle
         return bundle.url(forResource: name, withExtension: ext, subdirectory: subdirectory)
             ?? bundle.url(forResource: name, withExtension: ext)
     }
@@ -342,7 +342,7 @@ extension Double {
 
 // MARK: - Navigation Delegate
 
-/// Handles navigation policy to intercept clawdis:// deep links from canvas
+/// Handles navigation policy to intercept hassoon:// deep links from canvas
 @MainActor
 private final class ScreenNavigationDelegate: NSObject, WKNavigationDelegate {
     weak var controller: ScreenController?
@@ -357,8 +357,8 @@ private final class ScreenNavigationDelegate: NSObject, WKNavigationDelegate {
             return
         }
 
-        // Intercept clawdis:// deep links
-        if url.scheme == "clawdis" {
+        // Intercept hassoon:// deep links
+        if url.scheme == "hassoon" {
             decisionHandler(.cancel)
             self.controller?.onDeepLink?(url)
             return
@@ -386,7 +386,7 @@ private final class ScreenNavigationDelegate: NSObject, WKNavigationDelegate {
 }
 
 private final class CanvasA2UIActionMessageHandler: NSObject, WKScriptMessageHandler {
-    static let messageName = "clawdisCanvasA2UIAction"
+    static let messageName = "hassoonCanvasA2UIAction"
     static let legacyMessageNames = ["canvas", "a2ui", "userAction", "action"]
     static let handlerNames = [messageName] + legacyMessageNames
 

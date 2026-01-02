@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { ClawdisApp } from "./app";
+import { HassoonApp } from "./app";
 
-const originalConnect = ClawdisApp.prototype.connect;
+const originalConnect = HassoonApp.prototype.connect;
 
 function mountApp(pathname: string) {
   window.history.replaceState({}, "", pathname);
-  const app = document.createElement("clawdis-app") as ClawdisApp;
+  const app = document.createElement("hassoon-app") as HassoonApp;
   document.body.append(app);
   return app;
 }
@@ -18,14 +18,14 @@ function nextFrame() {
 }
 
 beforeEach(() => {
-  ClawdisApp.prototype.connect = () => {
+  HassoonApp.prototype.connect = () => {
     // no-op: avoid real gateway WS connections in browser tests
   };
   document.body.innerHTML = "";
 });
 
 afterEach(() => {
-  ClawdisApp.prototype.connect = originalConnect;
+  HassoonApp.prototype.connect = originalConnect;
   document.body.innerHTML = "";
 });
 

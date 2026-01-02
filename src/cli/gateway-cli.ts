@@ -1,7 +1,7 @@
 import fs from "node:fs";
 
 import type { Command } from "commander";
-import { CONFIG_PATH_CLAWDIS, loadConfig } from "../config/config.js";
+import { CONFIG_PATH_HASSOON, loadConfig } from "../config/config.js";
 import { callGateway, randomIdempotencyKey } from "../gateway/call.js";
 import { startGatewayServer } from "../gateway/server.js";
 import {
@@ -142,7 +142,7 @@ export function registerGatewayCli(program: Command) {
     )
     .option(
       "--token <token>",
-      "Shared token required in connect.params.auth.token (default: CLAWDIS_GATEWAY_TOKEN env if set)",
+      "Shared token required in connect.params.auth.token (default: HASSOON_GATEWAY_TOKEN env if set)",
     )
     .option("--auth <mode>", 'Gateway auth mode ("token"|"password")')
     .option("--password <password>", "Password for auth mode=password")
@@ -193,7 +193,7 @@ export function registerGatewayCli(program: Command) {
         return;
       }
       if (opts.token) {
-        process.env.CLAWDIS_GATEWAY_TOKEN = String(opts.token);
+        process.env.HASSOON_GATEWAY_TOKEN = String(opts.token);
       }
       const authModeRaw = opts.auth ? String(opts.auth) : undefined;
       const authMode =
@@ -281,7 +281,7 @@ export function registerGatewayCli(program: Command) {
     )
     .option(
       "--token <token>",
-      "Shared token required in connect.params.auth.token (default: CLAWDIS_GATEWAY_TOKEN env if set)",
+      "Shared token required in connect.params.auth.token (default: HASSOON_GATEWAY_TOKEN env if set)",
     )
     .option("--auth <mode>", 'Gateway auth mode ("token"|"password")')
     .option("--password <password>", "Password for auth mode=password")
@@ -374,7 +374,7 @@ export function registerGatewayCli(program: Command) {
         }
       }
       if (opts.token) {
-        process.env.CLAWDIS_GATEWAY_TOKEN = String(opts.token);
+        process.env.HASSOON_GATEWAY_TOKEN = String(opts.token);
       }
       const authModeRaw = opts.auth ? String(opts.auth) : undefined;
       const authMode =
@@ -401,12 +401,12 @@ export function registerGatewayCli(program: Command) {
         return;
       }
       const cfg = loadConfig();
-      const configExists = fs.existsSync(CONFIG_PATH_CLAWDIS);
+      const configExists = fs.existsSync(CONFIG_PATH_HASSOON);
       const mode = cfg.gateway?.mode;
       if (!opts.allowUnconfigured && mode !== "local") {
         if (!configExists) {
           defaultRuntime.error(
-            "Missing config. Run `clawdis setup` or set gateway.mode=local (or pass --allow-unconfigured).",
+            "Missing config. Run `hassoon setup` or set gateway.mode=local (or pass --allow-unconfigured).",
           );
         } else {
           defaultRuntime.error(

@@ -5,7 +5,7 @@ read_when:
 ---
 # Groups
 
-Clawdis treats group chats consistently across surfaces: WhatsApp, Telegram, Discord, iMessage.
+Hassoon treats group chats consistently across surfaces: WhatsApp, Telegram, Discord, iMessage.
 
 ## Session keys
 - Group sessions use `surface:group:<id>` session keys (rooms/channels use `surface:channel:<id>`).
@@ -24,7 +24,7 @@ Group messages require a mention unless overridden per group.
   routing: {
     groupChat: {
       requireMention: true,
-      mentionPatterns: ["@clawd", "clawdbot", "\\+15555550123"],
+      mentionPatterns: ["@hassoon", "hassoonbot", "\\+15555550123"],
       historyLimit: 50
     }
   }

@@ -24,7 +24,7 @@ const webMocks = vi.hoisted(() => ({
 vi.mock("../web/session.js", () => webMocks);
 
 async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise<T> {
-  const base = await fs.mkdtemp(join(tmpdir(), "clawdis-triggers-"));
+  const base = await fs.mkdtemp(join(tmpdir(), "hassoon-triggers-"));
   const previousHome = process.env.HOME;
   process.env.HOME = base;
   try {
@@ -40,7 +40,7 @@ function makeCfg(home: string) {
   return {
     agent: {
       model: "anthropic/claude-opus-4-5",
-      workspace: join(home, "clawd"),
+      workspace: join(home, "hassoon"),
     },
     whatsapp: {
       allowFrom: ["*"],
@@ -281,7 +281,7 @@ describe("trigger handling", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: join(home, "clawd"),
+            workspace: join(home, "hassoon"),
           },
           whatsapp: {
             allowFrom: ["*"],
@@ -324,13 +324,13 @@ describe("trigger handling", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: join(home, "clawd"),
+            workspace: join(home, "hassoon"),
           },
           whatsapp: {
             allowFrom: ["*"],
           },
           session: {
-            store: join(tmpdir(), `clawdis-session-test-${Date.now()}.json`),
+            store: join(tmpdir(), `hassoon-session-test-${Date.now()}.json`),
           },
         },
       );
@@ -363,13 +363,13 @@ describe("trigger handling", () => {
         {
           agent: {
             model: "anthropic/claude-opus-4-5",
-            workspace: join(home, "clawd"),
+            workspace: join(home, "hassoon"),
           },
           whatsapp: {
             allowFrom: ["*"],
           },
           session: {
-            store: join(tmpdir(), `clawdis-session-test-${Date.now()}.json`),
+            store: join(tmpdir(), `hassoon-session-test-${Date.now()}.json`),
           },
         },
       );

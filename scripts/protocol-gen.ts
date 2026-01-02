@@ -14,8 +14,8 @@ async function writeJsonSchema() {
 
   const rootSchema = {
     $schema: "http://json-schema.org/draft-07/schema#",
-    $id: "https://clawdis.dev/protocol.schema.json",
-    title: "Clawdis Gateway Protocol",
+    $id: "https://hassoon.dev/protocol.schema.json",
+    title: "Hassoon Gateway Protocol",
     description: "Handshake, request/response, and event frames for the Gateway WebSocket.",
     oneOf: [
       { $ref: "#/definitions/RequestFrame" },

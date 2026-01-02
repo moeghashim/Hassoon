@@ -17,8 +17,8 @@ function isBun(): boolean {
 
 function prefersSips(): boolean {
   return (
-    process.env.CLAWDIS_IMAGE_BACKEND === "sips" ||
-    (process.env.CLAWDIS_IMAGE_BACKEND !== "sharp" &&
+    process.env.HASSOON_IMAGE_BACKEND === "sips" ||
+    (process.env.HASSOON_IMAGE_BACKEND !== "sharp" &&
       isBun() &&
       process.platform === "darwin")
   );
@@ -31,7 +31,7 @@ async function loadSharp(): Promise<(buffer: Buffer) => ReturnType<Sharp>> {
 }
 
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "clawdis-img-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "hassoon-img-"));
   try {
     return await fn(dir);
   } finally {

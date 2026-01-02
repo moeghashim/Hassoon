@@ -2,8 +2,8 @@
 // the agent reports a model id. This includes custom models.json entries.
 
 import { loadConfig } from "../config/config.js";
-import { resolveClawdisAgentDir } from "./agent-paths.js";
-import { ensureClawdisModelsJson } from "./models-config.js";
+import { resolveHassoonAgentDir } from "./agent-paths.js";
+import { ensureHassoonModelsJson } from "./models-config.js";
 
 type ModelEntry = { id: string; contextWindow?: number };
 
@@ -14,8 +14,8 @@ const loadPromise = (async () => {
       "@mariozechner/pi-coding-agent"
     );
     const cfg = loadConfig();
-    await ensureClawdisModelsJson(cfg);
-    const agentDir = resolveClawdisAgentDir();
+    await ensureHassoonModelsJson(cfg);
+    const agentDir = resolveHassoonAgentDir();
     const authStorage = discoverAuthStorage(agentDir);
     const modelRegistry = discoverModels(authStorage, agentDir);
     const models = modelRegistry.getAll() as ModelEntry[];

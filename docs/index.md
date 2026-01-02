@@ -1,15 +1,15 @@
 ---
-summary: "Top-level overview of Clawdis, features, and purpose"
+summary: "Top-level overview of Hassoon, features, and purpose"
 read_when:
-  - Introducing Clawdis to newcomers
+  - Introducing Hassoon to newcomers
 ---
 <!-- {% raw %} -->
-# CLAWDIS 🦞
+# HASSOON 🦞
 
 > *"EXFOLIATE! EXFOLIATE!"* — A space lobster, probably
 
 <p align="center">
-  <img src="whatsapp-clawd.jpg" alt="CLAWDIS" width="420">
+  <img src="whatsapp-hassoon.jpg" alt="HASSOON" width="420">
 </p>
 
 <p align="center">
@@ -18,13 +18,13 @@ read_when:
 </p>
 
 <p align="center">
-  <a href="https://github.com/steipete/clawdis">GitHub</a> ·
-  <a href="https://github.com/steipete/clawdis/releases">Releases</a> ·
-  <a href="./clawd.md">Clawd setup</a>
+  <a href="https://github.com.moeghashim/hassoon">GitHub</a> ·
+  <a href="https://github.com.moeghashim/hassoon/releases">Releases</a> ·
+  <a href="./hassoon.md">Hassoon setup</a>
 </p>
 
-CLAWDIS bridges WhatsApp (via WhatsApp Web / Baileys), Telegram (Bot API / grammY), Discord (Bot API / discord.js), and iMessage (imsg CLI) to coding agents like [Pi](https://github.com/badlogic/pi-mono).
-It’s built for [Clawd](https://clawd.me), a space lobster who needed a TARDIS.
+HASSOON bridges WhatsApp (via WhatsApp Web / Baileys), Telegram (Bot API / grammY), Discord (Bot API / discord.js), and iMessage (imsg CLI) to coding agents like [Pi](https://github.com/badlogic/pi-mono).
+It’s built for [Hassoon](https://hassoon.me), a space lobster who needed a TARDIS.
 
 ## How it works
 
@@ -35,25 +35,25 @@ WhatsApp / Telegram / Discord
   ┌──────────────────────────┐
   │          Gateway          │  ws://127.0.0.1:18789 (loopback-only)
   │     (single source)       │  tcp://0.0.0.0:18790 (Bridge)
-  │                          │  http://<gateway-host>:18793/__clawdis__/canvas/ (Canvas host)
+  │                          │  http://<gateway-host>:18793/__hassoon__/canvas/ (Canvas host)
   └───────────┬───────────────┘
               │
               ├─ Pi agent (RPC)
-              ├─ CLI (clawdis …)
+              ├─ CLI (hassoon …)
               ├─ Chat UI (SwiftUI)
-              ├─ macOS app (Clawdis.app)
+              ├─ macOS app (Hassoon.app)
               └─ iOS node via Bridge + pairing
 ```
 
-Most operations flow through the **Gateway** (`clawdis gateway`), a single long-running process that owns provider connections and the WebSocket control plane.
+Most operations flow through the **Gateway** (`hassoon gateway`), a single long-running process that owns provider connections and the WebSocket control plane.
 
 ## Network model
 
 - **One Gateway per host**: it is the only process allowed to own the WhatsApp Web session.
 - **Loopback-first**: Gateway WS defaults to `ws://127.0.0.1:18789`.
-  - For Tailnet access, run `clawdis gateway --bind tailnet --token ...` (token is required for non-loopback binds).
+  - For Tailnet access, run `hassoon gateway --bind tailnet --token ...` (token is required for non-loopback binds).
 - **Bridge for nodes**: optional LAN/tailnet-facing bridge on `tcp://0.0.0.0:18790` for paired nodes (Bonjour-discoverable).
-- **Canvas host**: HTTP file server on `canvasHost.port` (default `18793`), serving `/__clawdis__/canvas/` for node WebViews; see `docs/configuration.md` (`canvasHost`).
+- **Canvas host**: HTTP file server on `canvasHost.port` (default `18793`), serving `/__hassoon__/canvas/` for node WebViews; see `docs/configuration.md` (`canvasHost`).
 - **Remote use**: SSH tunnel or tailnet/VPN; see `docs/remote.md` and `docs/discovery.md`.
 
 ## Features (high level)
@@ -83,23 +83,23 @@ pnpm build
 pnpm link --global
 
 # Pair WhatsApp Web (shows QR)
-clawdis login
+hassoon login
 
 # Run the Gateway (leave running)
-clawdis gateway --port 18789
+hassoon gateway --port 18789
 ```
 
 Send a test message (requires a running Gateway):
 
 ```bash
-clawdis send --to +15555550123 --message "Hello from CLAWDIS"
+hassoon send --to +15555550123 --message "Hello from HASSOON"
 ```
 
 ## Configuration (optional)
 
-Config lives at `~/.clawdis/clawdis.json`.
+Config lives at `~/.hassoon/hassoon.json`.
 
-- If you **do nothing**, CLAWDIS uses the bundled Pi binary in RPC mode with per-sender sessions.
+- If you **do nothing**, HASSOON uses the bundled Pi binary in RPC mode with per-sender sessions.
 - If you want to lock it down, start with `whatsapp.allowFrom` and (for groups) mention rules.
 
 Example:
@@ -107,7 +107,7 @@ Example:
 ```json5
 {
   whatsapp: { allowFrom: ["+15555550123"] },
-  routing: { groupChat: { requireMention: true, mentionPatterns: ["@clawd"] } }
+  routing: { groupChat: { requireMention: true, mentionPatterns: ["@hassoon"] } }
 }
 ```
 
@@ -117,7 +117,7 @@ Example:
   - [FAQ](./faq.md) ← *common questions answered*
   - [Configuration](./configuration.md)
   - [Nix mode](./nix.md)
-  - [Clawd personal assistant setup](./clawd.md)
+  - [Hassoon personal assistant setup](./hassoon.md)
   - [Skills](./skills.md)
   - [Skills config](./skills-config.md)
   - [Workspace templates](./templates/AGENTS.md)
@@ -145,7 +145,7 @@ Example:
 
 ## The name
 
-**CLAWDIS = CLAW + TARDIS** — because every space lobster needs a time-and-space machine.
+**HASSOON = CLAW + TARDIS** — because every space lobster needs a time-and-space machine.
 
 ---
 
@@ -154,9 +154,9 @@ Example:
 
 ## Credits
 
-- **Peter Steinberger** ([@steipete](https://twitter.com/steipete)) — Creator, lobster whisperer
+- **Peter Steinberger** ([@steipete](https://twitter.com.moeghashim)) — Creator, lobster whisperer
 - **Mario Zechner** ([@badlogicc](https://twitter.com/badlogicgames)) — Pi creator, security pen-tester
-- **Clawd** — The space lobster who demanded a better name
+- **Hassoon** — The space lobster who demanded a better name
 
 ## License
 

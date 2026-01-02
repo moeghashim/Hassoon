@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-IMAGE_NAME="clawdis-onboard-e2e"
+IMAGE_NAME="hassoon-onboard-e2e"
 
 echo "Building Docker image..."
 docker build -t "$IMAGE_NAME" -f "$ROOT_DIR/scripts/e2e/Dockerfile" "$ROOT_DIR"
@@ -29,7 +29,7 @@ docker run --rm -t "$IMAGE_NAME" bash -lc '
     export HOME="$home_dir"
     mkdir -p "$HOME"
 
-    input_fifo="$(mktemp -u "/tmp/clawdis-onboard-${case_name}.XXXXXX")"
+    input_fifo="$(mktemp -u "/tmp/hassoon-onboard-${case_name}.XXXXXX")"
     mkfifo "$input_fifo"
     script -q -c "$command" /dev/null < "$input_fifo" &
     wizard_pid=$!
@@ -51,7 +51,7 @@ docker run --rm -t "$IMAGE_NAME" bash -lc '
   }
 
   make_home() {
-    mktemp -d "/tmp/clawdis-e2e-$1.XXXXXX"
+    mktemp -d "/tmp/hassoon-e2e-$1.XXXXXX"
   }
 
   assert_file() {
@@ -138,9 +138,9 @@ docker run --rm -t "$IMAGE_NAME" bash -lc '
     home_dir="$(make_home local-basic)"
     run_wizard local-basic "$home_dir" send_local_basic
 
-    workspace_dir="$HOME/clawd"
-    config_path="$HOME/.clawdis/clawdis.json"
-    sessions_dir="$HOME/.clawdis/sessions"
+    workspace_dir="$HOME/hassoon"
+    config_path="$HOME/.hassoon/hassoon.json"
+    sessions_dir="$HOME/.hassoon/sessions"
 
     assert_file "$config_path"
     assert_dir "$sessions_dir"
@@ -225,7 +225,7 @@ NODE
       --skip-skills \
       --skip-health
 
-    config_path="$HOME/.clawdis/clawdis.json"
+    config_path="$HOME/.hassoon/hassoon.json"
     assert_file "$config_path"
 
     CONFIG_PATH="$config_path" node --input-type=module - <<'"'"'NODE'"'"'
@@ -259,8 +259,8 @@ NODE
     local home_dir
     home_dir="$(make_home reset-config)"
     export HOME="$home_dir"
-    mkdir -p "$HOME/.clawdis"
-    cat > "$HOME/.clawdis/clawdis.json" <<'"'"'JSON'"'"'
+    mkdir -p "$HOME/.hassoon"
+    cat > "$HOME/.hassoon/hassoon.json" <<'"'"'JSON'"'"'
 {
   "agent": { "workspace": "/root/old" },
   "gateway": {
@@ -272,7 +272,7 @@ JSON
 
     run_wizard reset-config "$home_dir" send_reset_config_only
 
-    config_path="$HOME/.clawdis/clawdis.json"
+    config_path="$HOME/.hassoon/hassoon.json"
     assert_file "$config_path"
 
     CONFIG_PATH="$config_path" node --input-type=module - <<'"'"'NODE'"'"'
@@ -304,7 +304,7 @@ NODE
     home_dir="$(make_home providers)"
     run_wizard_cmd providers "$home_dir" "node dist/index.js configure" send_providers_flow
 
-    config_path="$HOME/.clawdis/clawdis.json"
+    config_path="$HOME/.hassoon/hassoon.json"
     assert_file "$config_path"
 
     CONFIG_PATH="$config_path" node --input-type=module - <<'"'"'NODE'"'"'
@@ -341,8 +341,8 @@ NODE
     local home_dir
     home_dir="$(make_home skills)"
     export HOME="$home_dir"
-    mkdir -p "$HOME/.clawdis"
-    cat > "$HOME/.clawdis/clawdis.json" <<'"'"'JSON'"'"'
+    mkdir -p "$HOME/.hassoon"
+    cat > "$HOME/.hassoon/hassoon.json" <<'"'"'JSON'"'"'
 {
   "skills": {
     "allowBundled": ["__none__"],
@@ -353,7 +353,7 @@ JSON
 
     run_wizard_cmd skills "$home_dir" "node dist/index.js configure" send_skills_flow
 
-    config_path="$HOME/.clawdis/clawdis.json"
+    config_path="$HOME/.hassoon/hassoon.json"
     assert_file "$config_path"
 
     CONFIG_PATH="$config_path" node --input-type=module - <<'"'"'NODE'"'"'

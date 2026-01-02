@@ -75,8 +75,8 @@ const DEFAULT_CRON_FORM: CronFormState = {
   postToMainPrefix: "",
 };
 
-@customElement("clawdis-app")
-export class ClawdisApp extends LitElement {
+@customElement("hassoon-app")
+export class HassoonApp extends LitElement {
   @state() settings: UiSettings = loadSettings();
   @state() password = "";
   @state() tab: Tab = "chat";
@@ -220,7 +220,7 @@ export class ClawdisApp extends LitElement {
       url: this.settings.gatewayUrl,
       token: this.settings.token.trim() ? this.settings.token : undefined,
       password: this.password.trim() ? this.password : undefined,
-      clientName: "clawdis-control-ui",
+      clientName: "hassoon-control-ui",
       mode: "webchat",
       onHello: (hello) => {
         this.connected = true;

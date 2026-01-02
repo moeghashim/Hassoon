@@ -9,7 +9,7 @@ import {
 
 import { installSkill } from "../agents/skills-install.js";
 import { buildWorkspaceSkillStatus } from "../agents/skills-status.js";
-import type { ClawdisConfig } from "../config/config.js";
+import type { HassoonConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { guardCancel, resolveNodeManagerOptions } from "./onboard-helpers.js";
 
@@ -23,10 +23,10 @@ function summarizeInstallFailure(message: string): string | undefined {
 }
 
 function upsertSkillEntry(
-  cfg: ClawdisConfig,
+  cfg: HassoonConfig,
   skillKey: string,
   patch: { apiKey?: string },
-): ClawdisConfig {
+): HassoonConfig {
   const entries = { ...cfg.skills?.entries };
   const existing = (entries[skillKey] as { apiKey?: string } | undefined) ?? {};
   entries[skillKey] = { ...existing, ...patch };
@@ -40,10 +40,10 @@ function upsertSkillEntry(
 }
 
 export async function setupSkills(
-  cfg: ClawdisConfig,
+  cfg: HassoonConfig,
   workspaceDir: string,
   runtime: RuntimeEnv,
-): Promise<ClawdisConfig> {
+): Promise<HassoonConfig> {
   const report = buildWorkspaceSkillStatus(workspaceDir, { config: cfg });
   const eligible = report.skills.filter((s) => s.eligible);
   const missing = report.skills.filter(
@@ -77,7 +77,7 @@ export async function setupSkills(
     runtime,
   ) as "npm" | "pnpm" | "bun";
 
-  let next: ClawdisConfig = {
+  let next: HassoonConfig = {
     ...cfg,
     skills: {
       ...cfg.skills,
@@ -138,7 +138,7 @@ export async function setupSkills(
         if (result.stderr) runtime.log(result.stderr.trim());
         else if (result.stdout) runtime.log(result.stdout.trim());
         runtime.log(
-          "Tip: run `clawdis doctor` to review skills + requirements.",
+          "Tip: run `hassoon doctor` to review skills + requirements.",
         );
       }
     }

@@ -1,48 +1,48 @@
 // swift-tools-version: 6.2
-// Package manifest for the Clawdis macOS companion (menu bar app + IPC library).
+// Package manifest for the Hassoon macOS companion (menu bar app + IPC library).
 
 import PackageDescription
 
 let package = Package(
-    name: "Clawdis",
+    name: "Hassoon",
     platforms: [
         .macOS(.v15),
     ],
     products: [
-        .library(name: "ClawdisIPC", targets: ["ClawdisIPC"]),
-        .executable(name: "Clawdis", targets: ["Clawdis"]),
+        .library(name: "HassoonIPC", targets: ["HassoonIPC"]),
+        .executable(name: "Hassoon", targets: ["Hassoon"]),
     ],
     dependencies: [
         .package(url: "https://github.com/orchetect/MenuBarExtraAccess", exact: "1.2.2"),
         .package(url: "https://github.com/swiftlang/swift-subprocess.git", from: "0.1.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.8.0"),
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.8.1"),
-        .package(path: "../shared/ClawdisKit"),
+        .package(path: "../shared/HassoonKit"),
         .package(path: "../../Swabble"),
         .package(path: "../../Peekaboo/Core/PeekabooCore"),
         .package(path: "../../Peekaboo/Core/PeekabooAutomationKit"),
     ],
     targets: [
         .target(
-            name: "ClawdisProtocol",
+            name: "HassoonProtocol",
             dependencies: [],
-            path: "Sources/ClawdisProtocol",
+            path: "Sources/HassoonProtocol",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency"),
             ]),
         .target(
-            name: "ClawdisIPC",
+            name: "HassoonIPC",
             dependencies: [],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency"),
             ]),
         .executableTarget(
-            name: "Clawdis",
+            name: "Hassoon",
             dependencies: [
-                "ClawdisIPC",
-                "ClawdisProtocol",
-                .product(name: "ClawdisKit", package: "ClawdisKit"),
-                .product(name: "ClawdisChatUI", package: "ClawdisKit"),
+                "HassoonIPC",
+                "HassoonProtocol",
+                .product(name: "HassoonKit", package: "HassoonKit"),
+                .product(name: "HassoonChatUI", package: "HassoonKit"),
                 .product(name: "SwabbleKit", package: "swabble"),
                 .product(name: "MenuBarExtraAccess", package: "MenuBarExtraAccess"),
                 .product(name: "Subprocess", package: "swift-subprocess"),
@@ -55,18 +55,18 @@ let package = Package(
                 "Resources/Info.plist",
             ],
             resources: [
-                .copy("Resources/Clawdis.icns"),
+                .copy("Resources/Hassoon.icns"),
                 .copy("Resources/DeviceModels"),
             ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency"),
             ]),
         .testTarget(
-            name: "ClawdisIPCTests",
+            name: "HassoonIPCTests",
             dependencies: [
-                "ClawdisIPC",
-                "Clawdis",
-                "ClawdisProtocol",
+                "HassoonIPC",
+                "Hassoon",
+                "HassoonProtocol",
                 .product(name: "SwabbleKit", package: "swabble"),
             ],
             swiftSettings: [

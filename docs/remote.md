@@ -24,8 +24,8 @@ ssh -N -L 18789:127.0.0.1:18789 user@host
 ```
 
 With the tunnel up:
-- `clawdis health` and `clawdis status --deep` now reach the remote gateway via `ws://127.0.0.1:18789`.
-- `clawdis gateway {status,health,send,agent,call}` can also target the forwarded URL via `--url` when needed.
+- `hassoon health` and `hassoon status --deep` now reach the remote gateway via `ws://127.0.0.1:18789`.
+- `hassoon gateway {status,health,send,agent,call}` can also target the forwarded URL via `--url` when needed.
 
 ## CLI remote defaults
 

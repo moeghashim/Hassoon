@@ -4,7 +4,7 @@ import path from "node:path";
 import { confirm, multiselect, note, select, text } from "@clack/prompts";
 import chalk from "chalk";
 
-import type { ClawdisConfig } from "../config/config.js";
+import type { HassoonConfig } from "../config/config.js";
 import { loginWeb } from "../provider-web.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { normalizeE164 } from "../utils.js";
@@ -64,7 +64,7 @@ function noteDiscordTokenHelp(): void {
   );
 }
 
-function setWhatsAppAllowFrom(cfg: ClawdisConfig, allowFrom?: string[]) {
+function setWhatsAppAllowFrom(cfg: HassoonConfig, allowFrom?: string[]) {
   return {
     ...cfg,
     whatsapp: {
@@ -75,9 +75,9 @@ function setWhatsAppAllowFrom(cfg: ClawdisConfig, allowFrom?: string[]) {
 }
 
 async function promptWhatsAppAllowFrom(
-  cfg: ClawdisConfig,
+  cfg: HassoonConfig,
   runtime: RuntimeEnv,
-): Promise<ClawdisConfig> {
+): Promise<HassoonConfig> {
   const existingAllowFrom = cfg.whatsapp?.allowFrom ?? [];
   const existingLabel =
     existingAllowFrom.length > 0 ? existingAllowFrom.join(", ") : "unset";
@@ -152,10 +152,10 @@ async function promptWhatsAppAllowFrom(
 }
 
 export async function setupProviders(
-  cfg: ClawdisConfig,
+  cfg: HassoonConfig,
   runtime: RuntimeEnv,
   options?: { allowDisable?: boolean; allowSignalInstall?: boolean },
-): Promise<ClawdisConfig> {
+): Promise<HassoonConfig> {
   const whatsappLinked = await detectWhatsAppLinked();
   const telegramEnv = Boolean(process.env.TELEGRAM_BOT_TOKEN?.trim());
   const discordEnv = Boolean(process.env.DISCORD_BOT_TOKEN?.trim());
@@ -261,7 +261,7 @@ export async function setupProviders(
       note(
         [
           "Scan the QR with WhatsApp on your phone.",
-          "Credentials are stored under ~/.clawdis/credentials/ for future runs.",
+          "Credentials are stored under ~/.hassoon/credentials/ for future runs.",
         ].join("\n"),
         "WhatsApp linking",
       );
@@ -282,7 +282,7 @@ export async function setupProviders(
         runtime.error(`WhatsApp login failed: ${String(err)}`);
       }
     } else if (!whatsappLinked) {
-      note("Run `clawdis login` later to link WhatsApp.", "WhatsApp");
+      note("Run `hassoon login` later to link WhatsApp.", "WhatsApp");
     }
 
     next = await promptWhatsAppAllowFrom(next, runtime);
@@ -512,9 +512,9 @@ export async function setupProviders(
 
     note(
       [
-        'Link device with: signal-cli link -n "Clawdis"',
+        'Link device with: signal-cli link -n "Hassoon"',
         "Scan QR in Signal → Linked Devices",
-        "Then run: clawdis gateway call providers.status --params '{\"probe\":true}'",
+        "Then run: hassoon gateway call providers.status --params '{\"probe\":true}'",
       ].join("\n"),
       "Signal next steps",
     );
@@ -550,7 +550,7 @@ export async function setupProviders(
 
     note(
       [
-        "Ensure Clawdis has Full Disk Access to Messages DB.",
+        "Ensure Hassoon has Full Disk Access to Messages DB.",
         "Grant Automation permission for Messages when prompted.",
         "List chats with: imsg chats --limit 20",
       ].join("\n"),

@@ -1,17 +1,17 @@
-import ClawdisKit
+import HassoonKit
 import Foundation
 import Network
 import Testing
 import UIKit
-@testable import Clawdis
+@testable import Hassoon
 
 private struct KeychainEntry: Hashable {
     let service: String
     let account: String
 }
 
-private let bridgeService = "com.steipete.clawdis.bridge"
-private let nodeService = "com.steipete.clawdis.node"
+private let bridgeService = "com.moeghashim.hassoon.bridge"
+private let nodeService = "com.moeghashim.hassoon.node"
 private let instanceIdEntry = KeychainEntry(service: nodeService, account: "instanceId")
 private let preferredBridgeEntry = KeychainEntry(service: bridgeService, account: "preferredStableID")
 private let lastBridgeEntry = KeychainEntry(service: bridgeService, account: "lastDiscoveredStableID")
@@ -194,15 +194,15 @@ private func withKeychainValues<T>(
                 #expect(hello.token == "token-123")
 
                 let caps = Set(hello.caps ?? [])
-                #expect(caps.contains(ClawdisCapability.canvas.rawValue))
-                #expect(caps.contains(ClawdisCapability.screen.rawValue))
-                #expect(caps.contains(ClawdisCapability.voiceWake.rawValue))
-                #expect(!caps.contains(ClawdisCapability.camera.rawValue))
+                #expect(caps.contains(HassoonCapability.canvas.rawValue))
+                #expect(caps.contains(HassoonCapability.screen.rawValue))
+                #expect(caps.contains(HassoonCapability.voiceWake.rawValue))
+                #expect(!caps.contains(HassoonCapability.camera.rawValue))
 
                 let commands = Set(hello.commands ?? [])
-                #expect(commands.contains(ClawdisCanvasCommand.present.rawValue))
-                #expect(commands.contains(ClawdisScreenCommand.record.rawValue))
-                #expect(!commands.contains(ClawdisCameraCommand.snap.rawValue))
+                #expect(commands.contains(HassoonCanvasCommand.present.rawValue))
+                #expect(commands.contains(HassoonScreenCommand.record.rawValue))
+                #expect(!commands.contains(HassoonCameraCommand.snap.rawValue))
 
                 #expect(!(hello.platform ?? "").isEmpty)
                 #expect(!(hello.deviceFamily ?? "").isEmpty)
@@ -225,11 +225,11 @@ private func withKeychainValues<T>(
                 let hello = controller._test_makeHello(token: "token-456")
 
                 let caps = Set(hello.caps ?? [])
-                #expect(caps.contains(ClawdisCapability.camera.rawValue))
+                #expect(caps.contains(HassoonCapability.camera.rawValue))
 
                 let commands = Set(hello.commands ?? [])
-                #expect(commands.contains(ClawdisCameraCommand.snap.rawValue))
-                #expect(commands.contains(ClawdisCameraCommand.clip.rawValue))
+                #expect(commands.contains(HassoonCameraCommand.snap.rawValue))
+                #expect(commands.contains(HassoonCameraCommand.clip.rawValue))
             }
         }
     }

@@ -4,7 +4,7 @@ import { buildAgentSystemPromptAppend } from "./system-prompt.js";
 describe("buildAgentSystemPromptAppend", () => {
   it("includes owner numbers when provided", () => {
     const prompt = buildAgentSystemPromptAppend({
-      workspaceDir: "/tmp/clawd",
+      workspaceDir: "/tmp/hassoon",
       ownerNumbers: ["+123", " +456 ", ""],
     });
 
@@ -16,7 +16,7 @@ describe("buildAgentSystemPromptAppend", () => {
 
   it("omits owner section when numbers are missing", () => {
     const prompt = buildAgentSystemPromptAppend({
-      workspaceDir: "/tmp/clawd",
+      workspaceDir: "/tmp/hassoon",
     });
 
     expect(prompt).not.toContain("## User Identity");
@@ -25,7 +25,7 @@ describe("buildAgentSystemPromptAppend", () => {
 
   it("adds reasoning tag hint when enabled", () => {
     const prompt = buildAgentSystemPromptAppend({
-      workspaceDir: "/tmp/clawd",
+      workspaceDir: "/tmp/hassoon",
       reasoningTagHint: true,
     });
 

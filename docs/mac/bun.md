@@ -1,31 +1,31 @@
 ---
 summary: "Bundled bun gateway: packaging, launchd, signing, and bytecode"
 read_when:
-  - Packaging Clawdis.app
+  - Packaging Hassoon.app
   - Debugging the bundled gateway binary
   - Changing bun build flags or codesigning
 ---
 
 # Bundled bun Gateway (macOS)
 
-Goal: ship **Clawdis.app** with a self-contained relay binary that can run both the CLI and the Gateway daemon. No global `npm install -g clawdis`, no system Node requirement.
+Goal: ship **Hassoon.app** with a self-contained relay binary that can run both the CLI and the Gateway daemon. No global `npm install -g hassoon`, no system Node requirement.
 
 ## What gets bundled
 
 App bundle layout:
 
-- `Clawdis.app/Contents/Resources/Relay/clawdis`
+- `Hassoon.app/Contents/Resources/Relay/hassoon`
   - bun `--compile` relay executable built from `dist/macos/relay.js`
   - Supports:
-    - `clawdis …` (CLI)
-    - `clawdis gateway-daemon …` (LaunchAgent daemon)
-- `Clawdis.app/Contents/Resources/Relay/package.json`
+    - `hassoon …` (CLI)
+    - `hassoon gateway-daemon …` (LaunchAgent daemon)
+- `Hassoon.app/Contents/Resources/Relay/package.json`
   - tiny “p runtime compatibility” file (see below)
-- `Clawdis.app/Contents/Resources/Relay/theme/`
+- `Hassoon.app/Contents/Resources/Relay/theme/`
   - p TUI theme payload (optional, but strongly recommended)
 
 Why the sidecar files matter:
-- The embedded p runtime detects “bun binary mode” and then looks for `package.json` + `theme/` **next to `process.execPath`** (i.e. next to `clawdis`).
+- The embedded p runtime detects “bun binary mode” and then looks for `package.json` + `theme/` **next to `process.execPath`** (i.e. next to `hassoon`).
 - So even if bun can embed assets, the runtime expects filesystem paths. Keep the sidecar files.
 
 ## Build pipeline
@@ -46,29 +46,29 @@ Important bundler flags:
   - Reason: avoid bundling Electron stubs in the relay binary
 
 Version injection:
-- `--define "__CLAWDIS_VERSION__=\"<pkg version>\""`
-- `src/version.ts` also supports `__CLAWDIS_VERSION__` (and `CLAWDIS_BUNDLED_VERSION`) so `--version` doesn’t depend on reading `package.json` at runtime.
+- `--define "__HASSOON_VERSION__=\"<pkg version>\""`
+- `src/version.ts` also supports `__HASSOON_VERSION__` (and `HASSOON_BUNDLED_VERSION`) so `--version` doesn’t depend on reading `package.json` at runtime.
 
 ## Launchd (Gateway as LaunchAgent)
 
 Label:
-- `com.steipete.clawdis.gateway`
+- `com.moeghashim.hassoon.gateway`
 
 Plist location (per-user):
-- `~/Library/LaunchAgents/com.steipete.clawdis.gateway.plist`
+- `~/Library/LaunchAgents/com.moeghashim.hassoon.gateway.plist`
 
 Manager:
-- `apps/macos/Sources/Clawdis/GatewayLaunchAgentManager.swift`
+- `apps/macos/Sources/Hassoon/GatewayLaunchAgentManager.swift`
 
 Behavior:
-- “Clawdis Active” enables/disables the LaunchAgent.
+- “Hassoon Active” enables/disables the LaunchAgent.
 - App quit does **not** stop the gateway (launchd keeps it alive).
 
 Logging:
-- launchd stdout/err: `/tmp/clawdis/clawdis-gateway.log`
+- launchd stdout/err: `/tmp/hassoon/hassoon-gateway.log`
 
 Default LaunchAgent env:
-- `CLAWDIS_IMAGE_BACKEND=sips` (avoid sharp native addon under bun)
+- `HASSOON_IMAGE_BACKEND=sips` (avoid sharp native addon under bun)
 
 ## Codesigning (hardened runtime + bun)
 
@@ -77,7 +77,7 @@ Symptom (when mis-signed):
 
 Fix:
 - The bun executable needs JIT-ish permissions under hardened runtime.
-- `scripts/codesign-mac-app.sh` signs `Relay/clawdis` with:
+- `scripts/codesign-mac-app.sh` signs `Relay/hassoon` with:
   - `com.apple.security.cs.allow-jit`
   - `com.apple.security.cs.allow-unsigned-executable-memory`
 
@@ -105,17 +105,17 @@ It’s started from the relay daemon process, so the relay binary includes Playw
 From a packaged app (local build):
 
 ```bash
-dist/Clawdis.app/Contents/Resources/Relay/clawdis --version
+dist/Hassoon.app/Contents/Resources/Relay/hassoon --version
 
-CLAWDIS_SKIP_PROVIDERS=1 \
-CLAWDIS_SKIP_CANVAS_HOST=1 \
-dist/Clawdis.app/Contents/Resources/Relay/clawdis gateway-daemon --port 18999 --bind loopback
+HASSOON_SKIP_PROVIDERS=1 \
+HASSOON_SKIP_CANVAS_HOST=1 \
+dist/Hassoon.app/Contents/Resources/Relay/hassoon gateway-daemon --port 18999 --bind loopback
 ```
 
 Then, in another shell:
 
 ```bash
-pnpm -s clawdis gateway call health --url ws://127.0.0.1:18999 --timeout 3000
+pnpm -s hassoon gateway call health --url ws://127.0.0.1:18999 --timeout 3000
 ```
 
 ## Repo hygiene

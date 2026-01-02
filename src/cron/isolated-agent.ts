@@ -15,7 +15,7 @@ import {
 import { chunkText } from "../auto-reply/chunk.js";
 import { normalizeThinkLevel } from "../auto-reply/thinking.js";
 import type { CliDeps } from "../cli/deps.js";
-import type { ClawdisConfig } from "../config/config.js";
+import type { HassoonConfig } from "../config/config.js";
 import {
   DEFAULT_IDLE_MINUTES,
   loadSessionStore,
@@ -53,7 +53,7 @@ function pickSummaryFromPayloads(
 }
 
 function resolveDeliveryTarget(
-  cfg: ClawdisConfig,
+  cfg: HassoonConfig,
   jobPayload: {
     channel?:
       | "last"
@@ -122,7 +122,7 @@ function resolveDeliveryTarget(
 }
 
 function resolveCronSession(params: {
-  cfg: ClawdisConfig;
+  cfg: HassoonConfig;
   sessionKey: string;
   nowMs: number;
 }) {
@@ -153,7 +153,7 @@ function resolveCronSession(params: {
 }
 
 export async function runCronIsolatedAgentTurn(params: {
-  cfg: ClawdisConfig;
+  cfg: HassoonConfig;
   deps: CliDeps;
   job: CronJob;
   message: string;
