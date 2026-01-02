@@ -333,8 +333,10 @@ struct SettingsTab: View {
 
         let caps = Set(self.currentCaps())
         if caps.contains(HassoonCapability.camera.rawValue) {
+            commands.append(HassoonCameraCommand.list.rawValue)
             commands.append(HassoonCameraCommand.snap.rawValue)
             commands.append(HassoonCameraCommand.clip.rawValue)
+        }
         }
 
         return commands

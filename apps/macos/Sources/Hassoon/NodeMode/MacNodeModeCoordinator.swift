@@ -135,8 +135,10 @@ final class MacNodeModeCoordinator {
 
         let capsSet = Set(caps)
         if capsSet.contains(HassoonCapability.camera.rawValue) {
+            commands.append(HassoonCameraCommand.list.rawValue)
             commands.append(HassoonCameraCommand.snap.rawValue)
             commands.append(HassoonCameraCommand.clip.rawValue)
+        }
         }
 
         return commands

@@ -660,7 +660,6 @@ type DedupeEntry = {
   error?: ErrorShape;
 };
 
-
 function formatForLog(value: unknown): string {
   try {
     if (value instanceof Error) {
